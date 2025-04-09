@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 
 const MobileNavigation = () => {
   const navItems = [
-    { name: 'Map', icon: Map, path: '/' },
+    { name: 'Map', icon: Map, path: '/map' },
     { name: 'Hospitals', icon: Hospital, path: '/hospitals' },
     { name: 'Search', icon: Search, path: '/search' },
     { name: 'Donate', icon: Heart, path: '/donate' },

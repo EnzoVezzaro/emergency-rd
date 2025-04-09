@@ -6,6 +6,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AppProvider } from "@/context/AppContext";
 
+// Home/Index Page
+import Index from "./pages/Index";
+
 // Mobile App Pages
 import MapPage from "./pages/MapPage";
 import HospitalsPage from "./pages/HospitalsPage";
@@ -28,8 +31,11 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Landing page route */}
+            <Route path="/" element={<Index />} />
+            
             {/* Mobile app routes */}
-            <Route path="/" element={<MapPage />} />
+            <Route path="/map" element={<MapPage />} />
             <Route path="/hospitals" element={<HospitalsPage />} />
             <Route path="/hospitals/:hospitalId" element={<HospitalDetailsPage />} />
             <Route path="/search" element={<SearchPage />} />
