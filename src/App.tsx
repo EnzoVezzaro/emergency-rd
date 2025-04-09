@@ -19,6 +19,9 @@ import DonatePage from "./pages/DonatePage";
 // Dashboard Pages
 import DashboardHomePage from "./pages/dashboard/DashboardHomePage";
 import UploadPage from "./pages/dashboard/UploadPage";
+import DashboardHospitalsPage from "./pages/dashboard/HospitalsPage";
+import EventsPage from "./pages/dashboard/EventsPage";
+import PatientsPage from "./pages/dashboard/PatientsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +47,9 @@ const App = () => (
             {/* Dashboard routes */}
             <Route path="/dashboard" element={<DashboardHomePage />} />
             <Route path="/dashboard/upload" element={<UploadPage />} />
+            <Route path="/dashboard/hospitals" element={<DashboardHospitalsPage />} />
+            <Route path="/dashboard/events" element={<EventsPage />} />
+            <Route path="/dashboard/patients" element={<PatientsPage />} />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
