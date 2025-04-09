@@ -13,6 +13,21 @@ import { useAppContext } from '@/context/AppContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { v4 as uuidv4 } from 'uuid';
 
+// Define an interface that extends the upload data with our new fields
+interface ExtendedUpload {
+  id: string;
+  file_path: string;
+  file_type: string;
+  hospital_id: string | null;
+  event_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  ocr_status: string | null;
+  processed: boolean | null;
+  processing_results: { status?: string; count?: number } | null;
+  ocr_data: any | null;
+}
+
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -123,7 +138,7 @@ const UploadPage = () => {
     try {
       const { data, error } = await supabase
         .from('uploads')
-        .select('processed, processing_results, ocr_status')
+        .select('*')
         .eq('id', uploadId)
         .single();
         
@@ -131,13 +146,16 @@ const UploadPage = () => {
         throw error;
       }
       
-      if (data.ocr_status === 'completed' && data.processed) {
+      // Type assertion to work with our extended fields
+      const uploadData = data as unknown as ExtendedUpload;
+      
+      if (uploadData.ocr_status === 'completed' && uploadData.processed) {
         setProcessingStatus('complete');
         toast({
           title: "Processing complete",
-          description: `${data.processing_results?.count || 0} patient records were extracted and added to the database.`,
+          description: `${uploadData.processing_results?.count || 0} patient records were extracted and added to the database.`,
         });
-      } else if (data.ocr_status === 'error') {
+      } else if (uploadData.ocr_status === 'error') {
         setProcessingStatus('error');
         toast({
           title: "Processing failed",
