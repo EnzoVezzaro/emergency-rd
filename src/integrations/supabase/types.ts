@@ -172,6 +172,8 @@ export type Database = {
           file_type: string
           hospital_id: string | null
           id: string
+          ocr_data: Json | null
+          ocr_status: string | null
           processed: boolean | null
           processing_results: Json | null
           updated_at: string | null
@@ -183,6 +185,8 @@ export type Database = {
           file_type: string
           hospital_id?: string | null
           id?: string
+          ocr_data?: Json | null
+          ocr_status?: string | null
           processed?: boolean | null
           processing_results?: Json | null
           updated_at?: string | null
@@ -194,6 +198,8 @@ export type Database = {
           file_type?: string
           hospital_id?: string | null
           id?: string
+          ocr_data?: Json | null
+          ocr_status?: string | null
           processed?: boolean | null
           processing_results?: Json | null
           updated_at?: string | null
