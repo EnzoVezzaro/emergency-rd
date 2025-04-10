@@ -448,6 +448,7 @@
   },
   "donatePage": {
     "title": "Donaciones y Ayuda",
+    "titleCta": "Donaciones",
     "bloodDonations": {
       "title": "Donaciones de Sangre",
       "type": "Tipo",
@@ -508,7 +509,7 @@
   },
   "searchPage": {
     "title": "Buscar",
-    "inputPlaceholder": "Ingrese el nombre del paciente",
+    "inputPlaceholder": "Ingrese el nombre de la persona",
     "buttonText": "Buscar",
     "resultsTitle": "Resultados de la búsqueda",
     "noResults": {

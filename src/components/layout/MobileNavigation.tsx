@@ -3,13 +3,15 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Map, Hospital, Search, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useI18n } from '@/context/I18nContext';
 
 const MobileNavigation = () => {
+  const { t } = useI18n();
   const navItems = [
-    { name: 'Map', icon: Map, path: '/map' },
-    { name: 'Hospitals', icon: Hospital, path: '/hospitals' },
-    { name: 'Search', icon: Search, path: '/search' },
-    { name: 'Donate', icon: Heart, path: '/donate' },
+    { name: t('mapPage.title'), icon: Map, path: '/map' },
+    { name: t('hospitalsPage.title'), icon: Hospital, path: '/hospitals' },
+    { name: t('searchPage.title'), icon: Search, path: '/search' },
+    { name: t('donatePage.titleCta'), icon: Heart, path: '/donate' },
   ];
 
   return (
