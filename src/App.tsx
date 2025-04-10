@@ -14,17 +14,17 @@ const SETTINGS_STORAGE_KEY = 'appSettings';
 const THEME_DARK_CLASS = 'dark'; // Tailwind dark mode class
 
 // Auth components
-import { LoginPage } from "./pages/LoginPage";
+import { LoginPage } from "./pages/dashboard/LoginPage";
 
 // Home/Index Page
 import Index from "./pages/Index";
 
 // Mobile App Pages
-import MapPage from "./pages/MapPage";
-import HospitalsPage from "./pages/HospitalsPage";
-import HospitalDetailsPage from "./pages/HospitalDetailsPage";
-import SearchPage from "./pages/SearchPage";
-import DonatePage from "./pages/DonatePage";
+import MapPage from "./pages/mobile/MapPage";
+import HospitalsPage from "./pages/mobile/HospitalsPage";
+import HospitalDetailsPage from "./pages/mobile/HospitalDetailsPage";
+import SearchPage from "./pages/mobile/SearchPage";
+import DonatePage from "./pages/mobile/DonatePage";
 
 // Dashboard Pages
 import DashboardHomePage from "./pages/dashboard/DashboardHomePage";
