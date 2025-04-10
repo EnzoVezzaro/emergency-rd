@@ -193,7 +193,11 @@ const HospitalsPage = () => {
                   {hospitals.map((hospital) => (
                     <TableRow key={hospital.id}>
                       <TableCell className="font-medium">{hospital.name}</TableCell>
-                      <TableCell>{hospital.address}</TableCell>
+                      <TableCell>
+                        <a href={`https://maps.google.com/maps?q=${hospital.name +', '+ hospital.address}`} target="_blank" rel="noopener noreferrer">
+                          {hospital.address}
+                        </a>
+                      </TableCell> 
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center">
                           <span 

@@ -31,9 +31,6 @@ const DashboardSidebar = () => {
   const { t } = useI18n(); // Use the i18n hook
   const { open } = useSidebar();
 
-  console.log('sidebar: ', open);
-  
-
   return (
     <>
       <Sidebar className="sidebar-container border-r border-gray-200 dark:border-gray-700"> {/* Added dark mode border */}
