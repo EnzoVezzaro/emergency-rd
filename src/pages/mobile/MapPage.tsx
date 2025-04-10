@@ -41,12 +41,6 @@ const MapPage = () => {
             </div>
           </div>
         </div>
-        
-        <div className="mt-4">
-          <p className="text-sm text-gray-500">
-            {t('mapPage.viewMap')}
-          </p>
-        </div>
       </div>
     </MobileLayout>
   );

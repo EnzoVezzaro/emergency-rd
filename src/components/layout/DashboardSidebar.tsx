@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import {
   Hospital,
   AlertCircle,
@@ -26,10 +26,17 @@ import {
   useSidebar
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 
 const DashboardSidebar = () => {
   const { t } = useI18n(); // Use the i18n hook
   const { open } = useSidebar();
+  const navigate = useNavigate();
+  const logoutFn = async () => {
+    const { error } = await supabase.auth.signOut()
+    navigate('/');
+    console.log('error logout: ', error);
+  }
 
   return (
     <>
@@ -71,10 +78,10 @@ const DashboardSidebar = () => {
                 </SidebarMenuItem>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild>
-                    <NavLink to="/" className="flex items-center space-x-3">
+                    <div onClick={logoutFn} className="flex items-center space-x-3 cursor-pointer" style={{ cursor: 'pointer' }}>
                       <LogOut size={20} />
                       <span>{t('sidebar.exitDashboard')}</span> {/* Translate */}
-                    </NavLink>
+                    </div>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               </SidebarMenu>
