@@ -135,8 +135,8 @@ const PatientsPage = () => {
 
   // Calculate metrics
   const totalPatients = patients.length;
-  const hospitalizedPatients = patients.filter(p => p.hospitalId).length;
-  const criticalPatients = patients.filter(p => p.condition === 'critical' || p.condition === 'deceased').length;
+  const hospitalizedPatients = patients.filter(p => p.condition === 'deceased').length;
+  const criticalPatients = patients.filter(p => p.condition === 'critical').length;
   
   // Pagination
   const indexOfLastPatient = currentPage * patientsPerPage;
@@ -176,7 +176,7 @@ const PatientsPage = () => {
               <CardTitle>{t('patientsPage.stats.hospitalized')}</CardTitle>
               <CardDescription>{t('patientsPage.stats.hospitalizedDesc')}</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent> 
               <p className="text-2xl font-bold">{hospitalizedPatients}</p>
             </CardContent>
           </Card>

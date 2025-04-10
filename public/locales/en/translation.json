@@ -55,7 +55,7 @@
       "labels": {
         "hospitals": "Hospitals",
         "started": "Started",
-        "patients": "Patients",
+        "patients": "People",
         "involved": "People",
         "status": "Status"
       }
@@ -294,8 +294,8 @@
   },
   "patientsPage": {
     "stats": {
-      "hospitalized": "Hospitalized",
-      "hospitalizedDesc": "Patients currently hospitalized",
+      "hospitalized": "Deceased",
+      "hospitalizedDesc": "People confirmed deceased",
       "critical": "Critical",
       "criticalDesc": "Patients in critical condition"
     },

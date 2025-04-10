@@ -321,8 +321,8 @@
       "recentAdmissionsDesc": "Pacientes admitidos en los últimos 7 días",
       "discharged": "Dados de Alta",
       "dischargedDesc": "Pacientes dados de alta recientemente",
-      "hospitalized": "Hospitalizados",
-      "hospitalizedDesc": "Pacientes actualmente hospitalizados",
+      "hospitalized": "Fallecidos",
+      "hospitalizedDesc": "Personas fallecidas confirmadas",
       "critical": "Críticos",
       "criticalDesc": "Pacientes en estado crítico"
     },
