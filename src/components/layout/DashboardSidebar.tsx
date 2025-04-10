@@ -23,63 +23,81 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarTrigger,
+  useSidebar
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
 
 const DashboardSidebar = () => {
   const { t } = useI18n(); // Use the i18n hook
+  const { open } = useSidebar();
+
+  console.log('sidebar: ', open);
+  
 
   return (
-    <Sidebar className="border-r border-gray-200 dark:border-gray-700"> {/* Added dark mode border */}
-      <SidebarHeader className="flex items-center px-4 py-6">
-        <div className="flex items-center space-x-2">
-          <Link to={`/dashboard`} className='flex-row flex'>
-            <svg width="25" height="25" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <g fill="none" fillRule="evenodd">
-                <path fill="#E63946" d="M50,5 C72,5 90,23 90,45 C90,70 50,95 50,95 C50,95 10,70 10,45 C10,23 28,5 50,5 Z"/>
-                <path fill="#FFFFFF" d="M50,32 C54,28 61,28 65,32 C69,36 69,43 65,47 L50,62 L35,47 C31,43 31,36 35,32 C39,28 46,28 50,32 Z"/>
-              </g>
-            </svg>
-            <span className="font-semibold text-lg">ERS</span>
-          </Link>
-        </div>
-        <SidebarTrigger className="ml-auto" />
-      </SidebarHeader>
-      
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Main</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <NavItems />
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+    <>
+      <Sidebar className="sidebar-container border-r border-gray-200 dark:border-gray-700"> {/* Added dark mode border */}
+        <SidebarHeader className="flex items-center px-4 py-6">
+          <div className="flex items-center space-x-2">
+            <Link to={`/dashboard`} className='flex-row flex'>
+              <svg width="25" height="25" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <g fill="none" fillRule="evenodd">
+                  <path fill="#E63946" d="M50,5 C72,5 90,23 90,45 C90,70 50,95 50,95 C50,95 10,70 10,45 C10,23 28,5 50,5 Z"/>
+                  <path fill="#FFFFFF" d="M50,32 C54,28 61,28 65,32 C69,36 69,43 65,47 L50,62 L35,47 C31,43 31,36 35,32 C39,28 46,28 50,32 Z"/>
+                </g>
+              </svg>
+              <span className="font-semibold text-lg">ERS</span>
+            </Link>
+          </div>
+        </SidebarHeader>
         
-        <SidebarGroup className="mt-auto">
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <NavLink to="/dashboard/settings" className="flex items-center space-x-3">
-                    <Settings size={20} />
-                    <span>{t('sidebar.settings')}</span> {/* Translate */}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton asChild>
-                  <NavLink to="/" className="flex items-center space-x-3">
-                    <LogOut size={20} />
-                    <span>{t('sidebar.exitDashboard')}</span> {/* Translate */}
-                  </NavLink>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Main</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <NavItems />
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+          
+          <SidebarGroup className="mt-auto">
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/dashboard/settings" className="flex items-center space-x-3">
+                      <Settings size={20} />
+                      <span>{t('sidebar.settings')}</span> {/* Translate */}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild>
+                    <NavLink to="/" className="flex items-center space-x-3">
+                      <LogOut size={20} />
+                      <span>{t('sidebar.exitDashboard')}</span> {/* Translate */}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+      <SidebarTrigger  
+        className="trigger-sidebar ml-auto hover:text-sidebar-foreground" 
+        style={{
+          background: '#fafafa',
+          border: '1px solid #fff',
+          borderColor: 'rgb(229 231 235 / var(--tw-border-opacity, 1))',
+          position: 'relative',
+          left: open ? '-10px' : '15px',
+          zIndex: 999999,
+          top: '30px'
+        }} 
+      />
+    </>
   );
 };
 
