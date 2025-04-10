@@ -31,13 +31,13 @@ const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
   const getConditionBadge = (condition?: string) => {
     switch (condition) {
       case 'stable':
-        return <span className="text-xs bg-success/20 text-success/80 py-1 px-2 rounded-full">Stable</span>;
+        return <span className="text-xs bg-success/20 text-success/80 py-1 px-2 rounded-full">{t('patientCondition.stable')}</span>;
       case 'critical':
-        return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">Critical</span>;
+        return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">{t('patientCondition.critical')}</span>;
       case 'deceased':
-        return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">Deceased</span>;
+        return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">{t('patientCondition.deceased')}</span>;
       default:
-        return <span className="text-xs bg-gray-200 text-gray-700 py-1 px-2 rounded-full">Unknown</span>;
+        return <span className="text-xs bg-gray-200 text-gray-700 py-1 px-2 rounded-full">{t('patientCondition.unknown')}</span>;
     }
   };
 
