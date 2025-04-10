@@ -33,6 +33,213 @@
     "settings": "Configuración",
     "exitDashboard": "Salir del Panel"
   },
+  "dashboardHome": {
+    "title": "Panel de Respuesta a Emergencias",
+    "description": "Gestione eventos de emergencia, hospitales e información de pacientes",
+    "stats": {
+      "activeEvents": "Eventos Activos",
+      "hospitals": "Hospitales",
+      "registeredPatients": "Pacientes Registrados",
+      "lastUpdate": "Última Actualización"
+    },
+    "sections": {
+      "activeEvents": "Eventos de Emergencia Activos",
+      "recentUpdates": "Actualizaciones Recientes de Hospitales",
+      "noActiveEvents": "No hay eventos de emergencia activos",
+      "hospitalStatus": {
+        "receiving": "Recibiendo",
+        "full": "Lleno",
+        "closed": "Cerrado",
+        "active": "Activo"
+      },
+      "labels": {
+        "hospitals": "Hospitales",
+        "started": "Iniciado",
+        "patients": "Pacientes",
+        "status": "Estado"
+      }
+    }
+  },
+  "index": {
+    "title": "Sistema de Respuesta a Emergencias",
+    "subtitle": "Sistema de respuesta a emergencias que conecta familias con seres queridos durante eventos de crisis",
+    "cards": {
+      "mobile": {
+        "title": "Aplicación Móvil",
+        "description": "Para familias y ciudadanos buscando información",
+        "feature1": "Encontrar hospitales que reciben pacientes",
+        "feature2": "Buscar seres queridos por nombre",
+        "feature3": "Ver necesidades y oportunidades de donación",
+        "feature4": "Obtener actualizaciones de emergencia en tiempo real",
+        "button": "Abrir Aplicación Móvil"
+      },
+      "admin": {
+        "title": "Panel de Administración",
+        "description": "Para personal de emergencia y hospitalario",
+        "feature1": "Subir y procesar listas de pacientes",
+        "feature2": "Actualizar estado y capacidad de hospitales",
+        "feature3": "Gestionar eventos de crisis y recursos",
+        "feature4": "Crear y distribuir alertas",
+        "button": "Acceder al Panel"
+      }
+    },
+    "footer": {
+      "copyright": "© 2025 Sistema de Respuesta a Emergencias. Todos los derechos reservados.",
+      "tagline": "Ayudando a las comunidades a mantenerse conectadas durante emergencias."
+    }
+  },
+  "eventsPage": {
+    "title": "Eventos",
+    "description": "Gestionar eventos de desastre e información relacionada.",
+    "addEventButton": "Añadir Evento",
+    "stats": {
+      "active": "Eventos Activos",
+      "activeDesc": "Eventos de desastre actualmente activos",
+      "recent": "Eventos Recientes",
+      "recentDesc": "Eventos de los últimos 30 días",
+      "affected": "Total Afectados",
+      "affectedDesc": "Personas afectadas por eventos actuales"
+    },
+    "timeline": {
+      "title": "Línea de Tiempo de Eventos",
+      "description": "Actividad reciente de eventos",
+      "loading": "Cargando datos de eventos...",
+      "headers": {
+        "name": "Nombre",
+        "startDate": "Fecha de Inicio",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "active": "Activo",
+        "resolved": "Resuelto"
+      }
+    },
+    "sheet": {
+      "editTitle": "Editar Evento",
+      "addTitle": "Añadir Nuevo Evento",
+      "labels": {
+        "title": "Título del Evento",
+        "description": "Descripción",
+        "startDate": "Fecha de Inicio",
+        "endDate": "Fecha de Fin (opcional)",
+        "status": "Estado"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "update": "Actualizar",
+        "create": "Crear"
+      }
+    },
+    "dialog": {
+      "title": "Confirmar Eliminación",
+      "confirmText": "¿Está seguro que desea eliminar {{eventName}}? Esta acción no se puede deshacer.",
+      "buttons": {
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      }
+    },
+    "toasts": {
+      "deleted": {
+        "title": "Evento eliminado",
+        "description": "El evento ha sido eliminado exitosamente."
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "No se pudo eliminar el evento. Por favor intente de nuevo."
+      },
+      "updated": {
+        "title": "Evento actualizado",
+        "description": "La información del evento ha sido actualizada exitosamente."
+      },
+      "created": {
+        "title": "Evento creado",
+        "description": "El nuevo evento ha sido añadido exitosamente."
+      },
+      "saveError": {
+        "title": "Error",
+        "description": "No se pudo guardar el evento. Por favor revise sus datos e intente de nuevo."
+      }
+    }
+  },
+  "hospitalsPage": {
+    "title": "Hospitales",
+    "description": "Gestionar hospitales y la información de su estado.",
+    "addHospitalButton": "Añadir Hospital",
+    "stats": {
+      "total": "Hospitales Totales",
+      "totalDesc": "Registrados en el sistema",
+      "atCapacity": "A Capacidad",
+      "atCapacityDesc": "Hospitales a capacidad o cerca de ella",
+      "availableBeds": "Camas Disponibles",
+      "availableBedsDesc": "Total disponible en la red"
+    },
+    "network": {
+      "title": "Red de Hospitales",
+      "description": "Estado de los hospitales registrados",
+      "loading": "Cargando datos de hospitales...",
+      "headers": {
+        "name": "Nombre",
+        "location": "Ubicación",
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "status": {
+        "full": "A capacidad",
+        "receiving": "Capacidad normal",
+        "closed": "Cerrado"
+      }
+    },
+    "sheet": {
+      "editTitle": "Editar Hospital",
+      "addTitle": "Añadir Nuevo Hospital",
+      "labels": {
+        "name": "Nombre del Hospital",
+        "address": "Dirección",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "capacity": "Capacidad",
+        "currentOccupancy": "Ocupación Actual",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico"
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "update": "Actualizar",
+        "create": "Crear"
+      }
+    },
+    "dialog": {
+      "title": "Confirmar Eliminación",
+      "confirmText": "¿Está seguro que desea eliminar {{hospitalName}}? Esta acción no se puede deshacer.",
+      "buttons": {
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      }
+    },
+    "toasts": {
+      "deleted": {
+        "title": "Hospital eliminado",
+        "description": "El hospital ha sido eliminado exitosamente."
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "No se pudo eliminar el hospital. Por favor intente de nuevo."
+      },
+      "updated": {
+        "title": "Hospital actualizado",
+        "description": "La información del hospital ha sido actualizada exitosamente."
+      },
+      "created": {
+        "title": "Hospital creado",
+        "description": "El nuevo hospital ha sido añadido exitosamente."
+      },
+      "saveError": {
+        "title": "Error",
+        "description": "No se pudo guardar el hospital. Por favor revise sus datos e intente de nuevo."
+      }
+    }
+  },
   "uploadPage": {
     "title": "Subir Listas de Pacientes",
     "description": "Suba imágenes o documentos de listas de pacientes para ser procesados por IA",

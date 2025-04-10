@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
@@ -14,10 +13,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { createEvent, updateEvent, deleteEvent, DbEvent } from '@/services/supabaseService';
 import { format } from 'date-fns';
+import { useI18n } from '@/context/I18nContext'; // Import useI18n
+import { Event } from '@/types'; // Assuming Event type is defined here
 
 const EventsPage = () => {
   const { events, patients, isLoading, refreshData } = useAppContext();
   const { toast } = useToast();
+  const { t } = useI18n(); // Use the hook
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<DbEvent | null>(null);
@@ -39,17 +41,18 @@ const EventsPage = () => {
     });
   };
 
-  const handleEdit = (event: any) => {
+  const handleEdit = (event: Event) => { // Use the specific Event type
+    // Map DbEvent fields correctly
     setSelectedEvent({
       id: event.id,
-      title: event.name,
+      title: event.name, // Use name from context event
       description: event.description,
-      start_date: event.startDate,
+      start_date: event.startDate, // Use startDate from context event
       end_date: event.endDate || null,
       status: event.status,
-      is_public: true,
-      created_at: null,
-      updated_at: null
+      is_public: true, // Assuming default or fetch if needed
+      created_at: null, // Not available in context event
+      updated_at: null // Not available in context event
     });
 
     setFormData({
@@ -59,25 +62,25 @@ const EventsPage = () => {
       end_date: event.endDate || null,
       status: event.status
     });
-    
+
     setIsSheetOpen(true);
   };
 
   const handleDelete = async (id: string) => {
     setIsDialogOpen(false);
-    
+
     try {
       await deleteEvent(id);
       await refreshData();
       toast({
-        title: "Event deleted",
-        description: "The event has been successfully removed.",
+        title: t('eventsPage.toasts.deleted.title'),
+        description: t('eventsPage.toasts.deleted.description'),
       });
     } catch (error) {
       console.error("Failed to delete event:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete the event. Please try again.",
+        title: t('eventsPage.toasts.deleteError.title'),
+        description: t('eventsPage.toasts.deleteError.description'),
         variant: "destructive"
       });
     }
@@ -85,13 +88,13 @@ const EventsPage = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
       if (selectedEvent) {
         await updateEvent(selectedEvent.id, formData);
         toast({
-          title: "Event updated",
-          description: "The event information has been updated successfully.",
+          title: t('eventsPage.toasts.updated.title'),
+          description: t('eventsPage.toasts.updated.description'),
         });
       } else {
         await createEvent({
@@ -103,8 +106,8 @@ const EventsPage = () => {
           is_public: true
         });
         toast({
-          title: "Event created",
-          description: "The new event has been added successfully.",
+          title: t('eventsPage.toasts.created.title'),
+          description: t('eventsPage.toasts.created.description'),
         });
       }
       setIsSheetOpen(false);
@@ -113,22 +116,22 @@ const EventsPage = () => {
     } catch (error) {
       console.error("Failed to save event:", error);
       toast({
-        title: "Error",
-        description: "Failed to save the event. Please check your inputs and try again.",
+        title: t('eventsPage.toasts.saveError.title'),
+        description: t('eventsPage.toasts.saveError.description'),
         variant: "destructive"
       });
     }
   };
 
   // Calculate metrics
-  const activeEvents = events.filter(e => e.status === 'active').length;
-  const recentEvents = events.filter(e => {
+  const activeEventsCount = events.filter(e => e.status === 'active').length;
+  const recentEventsCount = events.filter(e => {
     const eventDate = new Date(e.startDate);
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     return eventDate >= thirtyDaysAgo;
   }).length;
-  
+
   // Count affected people based on patients with event IDs
   const totalAffected = patients.filter(p => events.some(e => e.status === 'active' && e.id === p.eventId)).length;
 
@@ -136,44 +139,44 @@ const EventsPage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Events</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('eventsPage.title')}</h1>
           <Button onClick={() => {
             setSelectedEvent(null);
             resetForm();
             setIsSheetOpen(true);
           }}>
-            <Plus className="mr-2 h-4 w-4" /> Add Event
+            <Plus className="mr-2 h-4 w-4" /> {t('eventsPage.addEventButton')}
           </Button>
         </div>
         <p className="text-muted-foreground">
-          Manage disaster events and related information.
+          {t('eventsPage.description')}
         </p>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Active Events</CardTitle>
-              <CardDescription>Currently active disaster events</CardDescription>
+              <CardTitle>{t('eventsPage.stats.active')}</CardTitle>
+              <CardDescription>{t('eventsPage.stats.activeDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{activeEvents}</p>
+              <p className="text-2xl font-bold">{activeEventsCount}</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
-              <CardTitle>Recent Events</CardTitle>
-              <CardDescription>Events from the past 30 days</CardDescription>
+              <CardTitle>{t('eventsPage.stats.recent')}</CardTitle>
+              <CardDescription>{t('eventsPage.stats.recentDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-2xl font-bold">{recentEvents}</p>
+              <p className="text-2xl font-bold">{recentEventsCount}</p>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardHeader>
-              <CardTitle>Total Affected</CardTitle>
-              <CardDescription>People affected by current events</CardDescription>
+              <CardTitle>{t('eventsPage.stats.affected')}</CardTitle>
+              <CardDescription>{t('eventsPage.stats.affectedDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{totalAffected.toLocaleString()}</p>
@@ -183,22 +186,22 @@ const EventsPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Event Timeline</CardTitle>
-            <CardDescription>Recent event activity</CardDescription>
+            <CardTitle>{t('eventsPage.timeline.title')}</CardTitle>
+            <CardDescription>{t('eventsPage.timeline.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex items-center justify-center p-4">
-                <p>Loading event data...</p>
+                <p>{t('eventsPage.timeline.loading')}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Start Date</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('eventsPage.timeline.headers.name')}</TableHead>
+                    <TableHead>{t('eventsPage.timeline.headers.startDate')}</TableHead>
+                    <TableHead className="text-center">{t('eventsPage.timeline.headers.status')}</TableHead>
+                    <TableHead className="text-right">{t('eventsPage.timeline.headers.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -210,7 +213,7 @@ const EventsPage = () => {
                         <span className={`inline-block px-2 py-1 rounded-full text-xs ${
                           event.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                         }`}>
-                          {event.status === 'active' ? 'Active' : 'Resolved'}
+                          {t(`eventsPage.timeline.status.${event.status}`)}
                         </span>
                       </TableCell>
                       <TableCell className="text-right">
@@ -218,10 +221,11 @@ const EventsPage = () => {
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(event)}>
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button 
-                            variant="ghost" 
+                          <Button
+                            variant="ghost"
                             size="icon"
                             onClick={() => {
+                              // Map DbEvent fields correctly for dialog
                               setSelectedEvent({
                                 id: event.id,
                                 title: event.name,
@@ -253,34 +257,34 @@ const EventsPage = () => {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent className="sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>{selectedEvent ? "Edit Event" : "Add New Event"}</SheetTitle>
+            <SheetTitle>{selectedEvent ? t('eventsPage.sheet.editTitle') : t('eventsPage.sheet.addTitle')}</SheetTitle>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Event Title</Label>
-              <Input 
-                id="title" 
-                value={formData.title} 
+              <Label htmlFor="title">{t('eventsPage.sheet.labels.title')}</Label>
+              <Input
+                id="title"
+                value={formData.title}
                 onChange={(e) => setFormData({...formData, title: e.target.value})}
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea 
-                id="description" 
-                value={formData.description} 
+              <Label htmlFor="description">{t('eventsPage.sheet.labels.description')}</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
                 onChange={(e) => setFormData({...formData, description: e.target.value})}
                 rows={3}
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="start_date">Start Date</Label>
-              <Input 
-                id="start_date" 
-                type="datetime-local" 
+              <Label htmlFor="start_date">{t('eventsPage.sheet.labels.startDate')}</Label>
+              <Input
+                id="start_date"
+                type="datetime-local"
                 value={formData.start_date ? new Date(formData.start_date).toISOString().slice(0, 16) : ''}
                 onChange={(e) => {
                   if (e.target.value) {
@@ -290,11 +294,11 @@ const EventsPage = () => {
                 required
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="end_date">End Date (optional)</Label>
-              <Input 
-                id="end_date" 
+              <Label htmlFor="end_date">{t('eventsPage.sheet.labels.endDate')}</Label>
+              <Input
+                id="end_date"
                 type="datetime-local"
                 value={formData.end_date ? new Date(formData.end_date).toISOString().slice(0, 16) : ''}
                 onChange={(e) => {
@@ -306,27 +310,27 @@ const EventsPage = () => {
                 }}
               />
             </div>
-            
+
             <div className="space-y-2">
-              <Label htmlFor="status">Status</Label>
-              <select 
+              <Label htmlFor="status">{t('eventsPage.sheet.labels.status')}</Label>
+              <select
                 id="status"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 value={formData.status}
                 onChange={(e) => setFormData({...formData, status: e.target.value})}
                 required
               >
-                <option value="active">Active</option>
-                <option value="resolved">Resolved</option>
+                <option value="active">{t('eventsPage.timeline.status.active')}</option>
+                <option value="resolved">{t('eventsPage.timeline.status.resolved')}</option>
               </select>
             </div>
-            
+
             <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setIsSheetOpen(false)}>
-                Cancel
+                {t('eventsPage.sheet.buttons.cancel')}
               </Button>
               <Button type="submit">
-                {selectedEvent ? "Update" : "Create"}
+                {selectedEvent ? t('eventsPage.sheet.buttons.update') : t('eventsPage.sheet.buttons.create')}
               </Button>
             </div>
           </form>
@@ -337,18 +341,18 @@ const EventsPage = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>{t('eventsPage.dialog.title')}</DialogTitle>
           </DialogHeader>
-          <p>Are you sure you want to delete {selectedEvent?.title}? This action cannot be undone.</p>
+          <p>{t('eventsPage.dialog.confirmText', { eventName: selectedEvent?.title })}</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t('eventsPage.dialog.buttons.cancel')}
             </Button>
-            <Button 
-              variant="destructive" 
+            <Button
+              variant="destructive"
               onClick={() => selectedEvent && handleDelete(selectedEvent.id)}
             >
-              Delete
+              {t('eventsPage.dialog.buttons.delete')}
             </Button>
           </DialogFooter>
         </DialogContent>

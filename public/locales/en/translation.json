@@ -33,6 +33,217 @@
     "settings": "Settings",
     "exitDashboard": "Exit Dashboard"
   },
+  "dashboardHome": {
+    "title": "Emergency Response Dashboard",
+    "description": "Manage emergency events, hospitals, and patient information",
+    "stats": {
+      "activeEvents": "Active Events",
+      "hospitals": "Hospitals",
+      "registeredPatients": "Registered Patients",
+      "lastUpdate": "Last Update"
+    },
+    "sections": {
+      "activeEvents": "Active Emergency Events",
+      "recentUpdates": "Recent Hospital Updates",
+      "noActiveEvents": "No active emergency events",
+      "hospitalStatus": {
+        "receiving": "Receiving",
+        "full": "Full",
+        "closed": "Closed",
+        "active": "Active"
+      },
+      "labels": {
+        "hospitals": "Hospitals",
+        "started": "Started",
+        "patients": "Patients",
+        "status": "Status"
+      }
+    }
+  },
+  "index": {
+    "title": "Emergency Response System",
+    "subtitle": "Emergency response system connecting families with loved ones during crisis events",
+    "cards": {
+      "mobile": {
+        "title": "Mobile App",
+        "description": "For families and citizens seeking information",
+        "features": [
+          "Find hospitals receiving patients",
+          "Search for loved ones by name",
+          "View donation needs and opportunities",
+          "Get real-time emergency updates"
+        ],
+        "button": "Open Mobile App"
+      },
+      "admin": {
+        "title": "Admin Dashboard",
+        "description": "For emergency responders and hospital staff",
+        "features": [
+          "Upload and process patient lists",
+          "Update hospital status and capacity",
+          "Manage crisis events and resources",
+          "Create and distribute alerts"
+        ],
+        "button": "Access Dashboard"
+      }
+    },
+    "footer": {
+      "copyright": "© 2025 Emergency Response System. All rights reserved.",
+      "tagline": "Helping communities stay connected during emergencies."
+    }
+  },
+  "eventsPage": {
+    "title": "Events",
+    "description": "Manage disaster events and related information.",
+    "addEventButton": "Add Event",
+    "stats": {
+      "active": "Active Events",
+      "activeDesc": "Currently active disaster events",
+      "recent": "Recent Events",
+      "recentDesc": "Events from the past 30 days",
+      "affected": "Total Affected",
+      "affectedDesc": "People affected by current events"
+    },
+    "timeline": {
+      "title": "Event Timeline",
+      "description": "Recent event activity",
+      "loading": "Loading event data...",
+      "headers": {
+        "name": "Name",
+        "startDate": "Start Date",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "resolved": "Resolved"
+      }
+    },
+    "sheet": {
+      "editTitle": "Edit Event",
+      "addTitle": "Add New Event",
+      "labels": {
+        "title": "Event Title",
+        "description": "Description",
+        "startDate": "Start Date",
+        "endDate": "End Date (optional)",
+        "status": "Status"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update",
+        "create": "Create"
+      }
+    },
+    "dialog": {
+      "title": "Confirm Deletion",
+      "confirmText": "Are you sure you want to delete {{eventName}}? This action cannot be undone.",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "toasts": {
+      "deleted": {
+        "title": "Event deleted",
+        "description": "The event has been successfully removed."
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "Failed to delete the event. Please try again."
+      },
+      "updated": {
+        "title": "Event updated",
+        "description": "The event information has been updated successfully."
+      },
+      "created": {
+        "title": "Event created",
+        "description": "The new event has been added successfully."
+      },
+      "saveError": {
+        "title": "Error",
+        "description": "Failed to save the event. Please check your inputs and try again."
+      }
+    }
+  },
+  "hospitalsPage": {
+    "title": "Hospitals",
+    "description": "Manage hospitals and their status information.",
+    "addHospitalButton": "Add Hospital",
+    "stats": {
+      "total": "Total Hospitals",
+      "totalDesc": "Registered in the system",
+      "atCapacity": "At Capacity",
+      "atCapacityDesc": "Hospitals at or near capacity",
+      "availableBeds": "Available Beds",
+      "availableBedsDesc": "Total available across network"
+    },
+    "network": {
+      "title": "Hospital Network",
+      "description": "Status of registered hospitals",
+      "loading": "Loading hospital data...",
+      "headers": {
+        "name": "Name",
+        "location": "Location",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "full": "At capacity",
+        "receiving": "Normal capacity",
+        "closed": "Closed"
+      }
+    },
+    "sheet": {
+      "editTitle": "Edit Hospital",
+      "addTitle": "Add New Hospital",
+      "labels": {
+        "name": "Hospital Name",
+        "address": "Address",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "capacity": "Capacity",
+        "currentOccupancy": "Current Occupancy",
+        "phone": "Phone",
+        "email": "Email"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "update": "Update",
+        "create": "Create"
+      }
+    },
+    "dialog": {
+      "title": "Confirm Deletion",
+      "confirmText": "Are you sure you want to delete {{hospitalName}}? This action cannot be undone.",
+      "buttons": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "toasts": {
+      "deleted": {
+        "title": "Hospital deleted",
+        "description": "The hospital has been successfully removed."
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "Failed to delete the hospital. Please try again."
+      },
+      "updated": {
+        "title": "Hospital updated",
+        "description": "The hospital information has been updated successfully."
+      },
+      "created": {
+        "title": "Hospital created",
+        "description": "The new hospital has been added successfully."
+      },
+      "saveError": {
+        "title": "Error",
+        "description": "Failed to save the hospital. Please check your inputs and try again."
+      }
+    }
+  },
   "uploadPage": {
     "title": "Upload Patient Lists",
     "description": "Upload images or documents of patient lists to be processed by AI",

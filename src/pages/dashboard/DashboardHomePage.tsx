@@ -1,11 +1,12 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Hospital, Users, Clock, AlertCircle } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
+import { useI18n } from '@/context/I18nContext';
 
 const DashboardHomePage = () => {
+  const { t } = useI18n();
   const { hospitals, patients, events } = useAppContext();
   
   const activeEvents = events.filter(event => event.status === 'active');
@@ -14,16 +15,18 @@ const DashboardHomePage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Emergency Response Dashboard</h1>
+          <h1 className="text-3xl font-bold">{t('dashboardHome.title')}</h1>
           <p className="text-gray-500 mt-1">
-            Manage emergency events, hospitals, and patient information
+            {t('dashboardHome.description')}
           </p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">Active Events</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-500">
+                {t('dashboardHome.stats.activeEvents')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
@@ -35,7 +38,9 @@ const DashboardHomePage = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">Hospitals</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-500">
+                {t('dashboardHome.stats.hospitals')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
@@ -47,7 +52,9 @@ const DashboardHomePage = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">Registered Patients</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-500">
+                {t('dashboardHome.stats.registeredPatients')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
@@ -59,7 +66,9 @@ const DashboardHomePage = () => {
           
           <Card>
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-gray-500">Last Update</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-500">
+                {t('dashboardHome.stats.lastUpdate')}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
@@ -73,7 +82,7 @@ const DashboardHomePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>Active Emergency Events</CardTitle>
+              <CardTitle>{t('dashboardHome.sections.activeEvents')}</CardTitle>
             </CardHeader>
             <CardContent>
               {activeEvents.length > 0 ? (
@@ -82,29 +91,33 @@ const DashboardHomePage = () => {
                     <div key={event.id} className="bg-gray-50 p-3 rounded-lg">
                       <div className="flex justify-between items-start mb-1">
                         <h3 className="font-medium">{event.name}</h3>
-                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">Active</span>
+                        <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full">
+                          {t('dashboardHome.sections.hospitalStatus.active')}
+                        </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{event.description}</p>
                       <div className="flex text-sm text-gray-500">
                         <span className="mr-4">
-                          Hospitals: {event.affectedHospitalIds.length}
+                          {t('dashboardHome.sections.labels.hospitals')}: {event.affectedHospitalIds.length}
                         </span>
                         <span>
-                          Started: {new Date(event.startDate).toLocaleDateString()}
+                          {t('dashboardHome.sections.labels.started')}: {new Date(event.startDate).toLocaleDateString()}
                         </span>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 text-center py-8">No active emergency events.</p>
+                <p className="text-gray-500 text-center py-8">
+                  {t('dashboardHome.sections.noActiveEvents')}
+                </p>
               )}
             </CardContent>
           </Card>
           
           <Card>
             <CardHeader>
-              <CardTitle>Recent Hospital Updates</CardTitle>
+              <CardTitle>{t('dashboardHome.sections.recentUpdates')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -116,10 +129,10 @@ const DashboardHomePage = () => {
                         hospital.status === 'receiving' ? 'text-green-600' :
                         hospital.status === 'full' ? 'text-amber-600' : 'text-red-600'
                       }`}>
-                        Status: {hospital.status.charAt(0).toUpperCase() + hospital.status.slice(1)}
+                        {t('dashboardHome.sections.labels.status')}: {t(`dashboardHome.sections.hospitalStatus.${hospital.status}`)}
                       </span>
                       <span className="text-gray-500">
-                        Patients: {hospital.patients.length}
+                        {t('dashboardHome.sections.labels.patients')}: {hospital.patients.length}
                       </span>
                     </div>
                   </div>
