@@ -356,14 +356,17 @@ const UploadPage = () => {
 
           if (existing) {
             // Update existing record
+            const updateData: any = {
+              additional_info: patient.additional_info,
+              upload_id: uploadData.id,
+              updated_at: new Date().toISOString()
+            }
+            if (patient?.status !== 'unknown'){
+              updateData.status = patient.status
+            }
             const { error: updateError } = await supabase
               .from('victims')
-              .update({
-                status: patient.status,
-                additional_info: patient.additional_info,
-                upload_id: uploadData.id,
-                updated_at: new Date().toISOString()
-              })
+              .update(updateData)
               .eq('id', existing.id);
 
             if (updateError) throw updateError;
