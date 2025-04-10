@@ -129,9 +129,10 @@ serve(async (req) => {
         [
           {
             "full_name": "string (patient's full name)",
-            "status": "string (must be 'stable', 'critical', or 'unknown')",
+            "status": "string (must be 'stable', 'critical', or 'unknown')", // if there's nothing use 'unknown'
             "additional_info": {
-              "age": number (integer age, or null if not found/readable)
+              "age": number (integer age, or null if not found/readable),
+              ...(other info)
             }
           },
           ...
@@ -162,7 +163,7 @@ serve(async (req) => {
 
       // --- GenAI Call ---
       const result = await genai.models.generateContent({
-          model: "gemini-2.0-flash-exp-image-generation",
+          model: "gemini-2.0-flash",
           config: {
             responseModalities: ["Text", "Image"],
           },
@@ -189,29 +190,39 @@ serve(async (req) => {
       }
       const responseText = response;
 
-      console.log(`Received GenAI response for uploadId: ${uploadId}`, {
-          responseTextLength: responseText.length,
-          // Be cautious logging potentially large/sensitive responseText directly
-          responseTextSnippet: responseText.slice(0, 200) + (responseText.length > 200 ? '...' : '')
-      });
-
+      console.log(`Received GenAI response for uploadId: ${uploadId}: `, response);
 
       // --- Parse and Validate Response ---
       let patientsData: z.infer<typeof PatientsArraySchema>;
       try {
-        // Clean potential markdown/text around JSON
-        const jsonMatch = responseText.match(/```(?:json)?([\s\S]*?)```|(\[[\s\S]*\])/);
-        if (!jsonMatch) {
-            throw new Error("No JSON array found in the response.");
+        console.log('Attempting to parse GenAI response...');
+        let jsonString = responseText;
+
+        // Clean potential markdown formatting
+        const jsonMatch = responseText.match(/```(?:json)?([\s\S]*?)```/);
+        if (jsonMatch && jsonMatch[1]) {
+          jsonString = jsonMatch[1].trim();
+          console.log('Extracted JSON from markdown block.');
+        } else {
+          // Fallback: Try to find the start of the JSON array directly
+          const arrayStart = jsonString.indexOf('[');
+          const arrayEnd = jsonString.lastIndexOf(']');
+          if (arrayStart !== -1 && arrayEnd !== -1) {
+            jsonString = jsonString.substring(arrayStart, arrayEnd + 1);
+            console.log('Extracted JSON array directly.');
+          } else {
+            throw new Error("Could not find valid JSON array in the response.");
+          }
         }
-        // Prioritize fenced code block content, fallback to array match
-        const jsonString = jsonMatch[1] || jsonMatch[2];
 
         if (!jsonString) {
-             throw new Error("Extracted JSON string is empty.");
+             throw new Error("Extracted JSON string is empty after cleaning.");
         }
 
-        const rawPatients = JSON.parse(jsonString.trim());
+        console.log('Cleaned JSON string (first 200 chars):', jsonString.slice(0, 200));
+        const rawPatients = JSON.parse(jsonString);
+        console.log(`Parsed ${rawPatients.length} raw patient objects.`);
+
         const validationResult = PatientsArraySchema.safeParse(rawPatients);
 
         if (!validationResult.success) {
@@ -249,8 +260,8 @@ serve(async (req) => {
                 status: patient.status,
                 hospital_id: upload.hospital_id,
                 event_id: upload.event_id,
-                additional_info: patient.additional_info, // Already includes age potentially null
-                upload_id: upload.id // Link back to the upload for traceability
+                additional_info: patient.additional_info,
+                upload_id: upload.id // Explicitly set the upload_id
             });
 
           if (insertError) {
@@ -261,7 +272,7 @@ serve(async (req) => {
           }
       }
 
-       console.log(`Finished inserting patients for uploadId: ${uploadId}. Success: ${insertedCount}/${patientsData.length}`);
+      console.log(`Finished inserting patients for uploadId: ${uploadId}. Success: ${insertedCount}/${patientsData.length}`);
 
 
       // --- Finalize Upload Record ---
@@ -272,17 +283,14 @@ serve(async (req) => {
         .from('uploads')
         .update({
           ocr_status: finalStatus,
-          // Avoid storing large raw data back into the upload row if possible
-          // Storing counts/status is usually sufficient
-          // ocr_data: { patients: patientsData }, // Consider if storing the full extracted data here is necessary
+          ocr_data: { patients: patientsData },
           processed: true,
           processing_results: {
-            status: processingSuccess ? 'success' : 'partial_failure', // More descriptive status
+            status: processingSuccess ? 'success' : 'partial_failure',
             extracted_count: patientsData.length,
             inserted_count: insertedCount,
-            errors: insertErrors, // Store specific insert errors if needed
+            errors: insertErrors,
           },
-          processed_at: new Date().toISOString(), // Add timestamp for completion
           updated_at: new Date().toISOString()
         })
         .eq('id', uploadId);
@@ -320,8 +328,8 @@ serve(async (req) => {
 
       console.error(`Error in processing pipeline for uploadId: ${uploadId}`, {
         errorMessage: errorMessage,
-        // errorStack: errorStack, // Stack can be very long, log conditionally or trim if needed
-        uploadId: uploadId, // Use the captured uploadId
+        errorStack: errorStack,
+        uploadId: uploadId,
         timestamp: errorTimestamp
       });
 
@@ -331,12 +339,11 @@ serve(async (req) => {
                 .from('uploads')
                 .update({
                     ocr_status: 'failed',
-                    processed: true, // Mark as processed (even though it failed)
+                    processed: true,
                     processing_results: {
                         status: 'pipeline_error',
-                        error: errorMessage, // Store the error message
+                        error: errorMessage,
                     },
-                    processed_at: errorTimestamp,
                     updated_at: errorTimestamp
                 })
                 .eq('id', uploadId);
@@ -352,16 +359,8 @@ serve(async (req) => {
 
     // --- Outer Catch Block ---
     } catch (error) {
-      const errorTimestamp = new Date().toISOString();
       const errorMessage = error instanceof Error ? error.message : String(error);
       
-      console.error('ERROR PROCESSING REQUEST:', {
-        uploadId: uploadId || 'unknown',
-        error: cleanErrorForLogging(error),
-        timestamp: errorTimestamp,
-        requestBody: requestBody ? sanitizeForLogging(requestBody) : null
-      });
-
       let httpStatus = 500;
       let errorDetails = errorMessage;
 
@@ -380,7 +379,7 @@ serve(async (req) => {
           success: false,
           error: httpStatus === 500 ? 'Server error' : httpStatus === 404 ? 'Resource not found' : 'Invalid request',
           details: errorDetails,
-          errorId: generateErrorId() // Helps track specific errors
+          errorId: crypto.randomUUID() // Generate unique error ID
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 

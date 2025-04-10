@@ -130,6 +130,8 @@ const UploadPage = () => {
     } catch (error) {
       console.error('Upload error:', error);
       setIsUploading(false);
+      setProcessingStatus('error');
+      setUploadComplete(true);
       toast({
         title: "Upload failed",
         description: error instanceof Error ? error.message : "An unknown error occurred",

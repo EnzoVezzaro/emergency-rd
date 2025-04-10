@@ -231,6 +231,7 @@ export type Database = {
           id: string
           status: string
           updated_at: string | null
+          upload_id: string | null
         }
         Insert: {
           additional_info?: Json | null
@@ -241,6 +242,7 @@ export type Database = {
           id?: string
           status: string
           updated_at?: string | null
+          upload_id?: string | null
         }
         Update: {
           additional_info?: Json | null
@@ -251,6 +253,7 @@ export type Database = {
           id?: string
           status?: string
           updated_at?: string | null
+          upload_id?: string | null
         }
         Relationships: [
           {
@@ -265,6 +268,13 @@ export type Database = {
             columns: ["hospital_id"]
             isOneToOne: false
             referencedRelation: "hospitals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "victims_upload_id_fkey"
+            columns: ["upload_id"]
+            isOneToOne: false
+            referencedRelation: "uploads"
             referencedColumns: ["id"]
           },
         ]
