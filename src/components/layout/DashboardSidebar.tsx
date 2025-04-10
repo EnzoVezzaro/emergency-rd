@@ -33,7 +33,7 @@ const DashboardSidebar = () => {
 
   return (
     <>
-      <Sidebar className="sidebar-container border-r border-gray-200 dark:border-gray-700"> {/* Added dark mode border */}
+      <Sidebar className="sidebar-container border-r border-gray-200 dark:border-gray-700 z-1">
         <SidebarHeader className="flex items-center px-4 py-6">
           <div className="flex items-center space-x-2">
             <Link to={`/dashboard`} className='flex-row flex'>
@@ -90,7 +90,7 @@ const DashboardSidebar = () => {
           borderColor: 'rgb(229 231 235 / var(--tw-border-opacity, 1))',
           position: 'relative',
           left: open ? '-10px' : '15px',
-          zIndex: 999999,
+          zIndex: 3,
           top: '30px'
         }} 
       />
