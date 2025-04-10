@@ -112,11 +112,15 @@ const UploadPage = () => {
       
       // Start OCR processing
       setProcessingStatus('processing');
+      console.log('here: ');
       const { error: processError } = await supabase.functions.invoke('process-patient-list', {
         body: { uploadId: uploadData.id }
       });
+
+      console.log('here: 2');
       
       if (processError) {
+        setIsUploading(false);
         throw new Error(`Processing error: ${processError.message}`);
       }
       
