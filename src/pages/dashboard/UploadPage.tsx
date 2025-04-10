@@ -392,6 +392,38 @@ const UploadPage = () => {
         }
       }
 
+      // Update relationship event / hospital
+      try {
+        // Check if patient exists
+        const { data: existingRelation, error: findErrorRelation } = await supabase
+          .from('hospital_events')
+          .select('*')
+          .eq('hospital_id', selectedHospital)
+          .eq('event_id', currentEvent.id)
+          .maybeSingle();
+
+        if (findErrorRelation) throw findErrorRelation;
+
+        if (existingRelation) {
+          // Update existing record do nothing
+        } else {
+          // Insert new record
+          const { error: insertErrorRelation } = await supabase
+            .from('hospital_events')
+            .insert({
+              hospital_id: selectedHospital,
+              event_id: currentEvent.id,
+            });
+
+          if (insertErrorRelation) throw insertErrorRelation;
+        }
+      } catch (error) {
+        insertErrors.push({
+          name: 'relation event/hospital',
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
+        console.error(`Error processing relation event/hospital:`, error);
+      }
       // Update upload record with processing results
       const { error: updateError } = await supabase
         .from('uploads')

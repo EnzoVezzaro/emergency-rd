@@ -10,6 +10,8 @@ import { useAppContext } from '@/context/AppContext';
 const MapPage = () => {
   const { currentEvent } = useAppContext();
 
+  console.log('currentEvent: ', currentEvent); 
+
   return (
     <MobileLayout>
       <div className="p-4">

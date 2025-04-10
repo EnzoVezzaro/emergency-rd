@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -12,13 +12,20 @@ const SearchPage = () => {
   const [searchResults, setSearchResults] = useState<ReturnType<typeof useAppContext>['patients']>([]);
   const [hasSearched, setHasSearched] = useState(false);
   
-  const { searchPatients } = useAppContext();
+  const { searchPatients, patients } = useAppContext();
+
+  useEffect(()=>{
+    setHasSearched(true);
+    setSearchResults(patients)
+  }, [])
   
   const handleSearch = () => {
     const results = searchPatients(searchQuery);
-    setSearchResults(results);
+    setSearchResults(!searchQuery ? patients : results);
     setHasSearched(true);
   };
+
+  console.log('patiend: ', patients, searchResults);
 
   return (
     <MobileLayout>
@@ -52,7 +59,7 @@ const SearchPage = () => {
                 <h2 className="text-lg font-medium mb-4">Search Results</h2>
                 {searchResults.map((patient) => (
                   <PatientSearchResult key={patient.id} patient={patient} />
-                ))}
+                ))} 
               </div>
             ) : (
               <div className="text-center p-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">

@@ -12,6 +12,9 @@ type PatientSearchResultProps = {
 
 const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
   const { getHospital, getEvent } = useAppContext();
+
+  console.log('patient: ', patient);
+  
   
   const hospital = getHospital(patient.hospitalId);
   const event = getEvent(patient.eventId);
