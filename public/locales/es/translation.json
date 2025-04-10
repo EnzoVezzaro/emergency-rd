@@ -292,7 +292,7 @@
         "point3": "Tanto texto mecanografiado como manuscrito puede ser procesado, pero el texto mecanografiado da mejores resultados."
       },
       "uploadButton": {
-        "default": "Subir y Procesar",
+        "default": "Extraer Informacion ✨",
         "uploading": "Subiendo...",
         "processing": "Procesando...",
         "saving": "Salvando...",

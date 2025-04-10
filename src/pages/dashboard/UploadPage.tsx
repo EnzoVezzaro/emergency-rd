@@ -337,18 +337,76 @@ const UploadPage = () => {
         throw new Error(`Upload record error: ${uploadError.message}`);
       }
 
-      // Insert patients into victims table
+      // Insert or update patients in victims table
+      let insertedCount = 0;
+      const insertErrors: {name: string, error: string}[] = [];
+      
       for (const patient of extractedPatients) {
-        await supabase
-          .from('victims')
-          .insert({
-            full_name: patient.full_name,
-            status: patient.status,
-            hospital_id: selectedHospital,
-            event_id: currentEvent.id,
-            additional_info: patient.additional_info,
-            upload_id: uploadData.id
+        try {
+          // Check if patient exists
+          const { data: existing, error: findError } = await supabase
+            .from('victims')
+            .select('id')
+            .eq('full_name', patient.full_name)
+            .eq('hospital_id', selectedHospital)
+            .eq('event_id', currentEvent.id)
+            .maybeSingle();
+
+          if (findError) throw findError;
+
+          if (existing) {
+            // Update existing record
+            const { error: updateError } = await supabase
+              .from('victims')
+              .update({
+                status: patient.status,
+                additional_info: patient.additional_info,
+                upload_id: uploadData.id,
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', existing.id);
+
+            if (updateError) throw updateError;
+          } else {
+            // Insert new record
+            const { error: insertError } = await supabase
+              .from('victims')
+              .insert({
+                full_name: patient.full_name,
+                status: patient.status,
+                hospital_id: selectedHospital,
+                event_id: currentEvent.id,
+                additional_info: patient.additional_info,
+                upload_id: uploadData.id
+              });
+
+            if (insertError) throw insertError;
+            insertedCount++;
+          }
+        } catch (error) {
+          insertErrors.push({
+            name: patient.full_name,
+            error: error instanceof Error ? error.message : 'Unknown error'
           });
+          console.error(`Error processing patient ${patient.full_name}:`, error);
+        }
+      }
+
+      // Update upload record with processing results
+      const { error: updateError } = await supabase
+        .from('uploads')
+        .update({
+          processing_results: {
+            status: insertErrors.length > 0 ? 'partial_failure' : 'success',
+            extracted_count: extractedPatients.length,
+            inserted_count: insertedCount,
+            errors: insertErrors
+          }
+        })
+        .eq('id', uploadData.id);
+
+      if (updateError) {
+        console.error('Failed to update upload processing results:', updateError);
       }
       
       setUploadComplete(true);

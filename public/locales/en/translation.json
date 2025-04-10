@@ -274,7 +274,7 @@
         "point3": "Both typed and handwritten text can be processed, but typed text yields better results."
       },
       "uploadButton": {
-        "default": "Upload & Process",
+        "default": "Extract Information ✨",
         "uploading": "Uploading...",
         "processing": "Processing...",
         "saving": "Saving...",
