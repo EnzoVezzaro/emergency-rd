@@ -143,6 +143,7 @@ const PatientsPage = () => {
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
   const currentPatients = patients.slice(indexOfFirstPatient, indexOfLastPatient);
   const totalPages = Math.ceil(patients.length / patientsPerPage);
+  console.log('currentPatients: ', currentPatients, patients);
 
   return (
     <DashboardLayout>
@@ -226,6 +227,7 @@ const PatientsPage = () => {
                             <span className={`inline-block px-2 py-1 rounded-full text-xs ${
                               patient.condition === 'critical' ? 'bg-red-100 text-red-800' : 
                               patient.condition === 'stable' ? 'bg-green-100 text-green-800' : 
+                              patient.condition === 'deceased' ? 'bg-red-100 text-red-800' : 
                               'bg-gray-100 text-gray-800'
                             }`}>
                               {t(`patientsPage.list.status.${patient.condition || 'unknown'}`)}
@@ -339,6 +341,7 @@ const PatientsPage = () => {
                 <option value="stable">{t('patientsPage.sheet.fields.conditionOptions.stable')}</option>
                 <option value="critical">{t('patientsPage.sheet.fields.conditionOptions.critical')}</option>
                 <option value="unknown">{t('patientsPage.sheet.fields.conditionOptions.unknown')}</option>
+                <option value="deceased">{t('patientsPage.sheet.fields.conditionOptions.deceased')}</option>
               </select>
             </div>
             

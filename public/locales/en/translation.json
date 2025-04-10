@@ -318,6 +318,7 @@
         "conditionOptions": {
           "stable": "Stable",
           "critical": "Critical",
+          "deceased": "Deceased",
           "unknown": "Unknown"
         },
         "hospital": "Hospital",

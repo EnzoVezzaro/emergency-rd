@@ -26,7 +26,7 @@ export type DonationNeed = {
 export type Patient = {
   id: string;
   name: string;
-  condition?: 'stable' | 'critical' | 'unknown';
+  condition?: 'stable' | 'critical' | 'deceased' | 'unknown';
   dateAdmitted: string;
   hospitalId: string;
   eventId: string;

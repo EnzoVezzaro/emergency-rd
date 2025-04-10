@@ -236,7 +236,7 @@ export const getHospitalEventsMap = async (): Promise<Record<string, string[]>> 
 
 // Patient/Victim CRUD operations
 export const fetchVictims = async (): Promise<DbVictim[]> => {
-  const { data, error } = await supabase.from("victims").select("*");
+  const { data, error } = await supabase.from("victims").select("*").order("created_at", { ascending: false });
   
   if (error) {
     console.error("Error fetching victims:", error);
@@ -250,7 +250,7 @@ export const mapDbVictimToPatient = (victim: DbVictim): Patient => {
   return {
     id: victim.id,
     name: victim.full_name,
-    condition: victim.status === 'stable' || victim.status === 'critical' ? victim.status : 'unknown',
+    condition: victim.status === 'stable' || victim.status === 'critical' || victim.status === 'deceased' ? victim.status : 'unknown',
     dateAdmitted: victim.created_at || new Date().toISOString(),
     hospitalId: victim.hospital_id || "",
     eventId: victim.event_id || ""

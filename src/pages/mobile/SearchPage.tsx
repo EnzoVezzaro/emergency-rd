@@ -35,7 +35,10 @@ const SearchPage = () => {
             <Input
               placeholder="Enter name to search"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setSearchResults(!e.target.value ? patients : searchResults);
+              }}
               className="flex-1"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

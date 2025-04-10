@@ -13,9 +13,6 @@ type PatientSearchResultProps = {
 const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
   const { getHospital, getEvent } = useAppContext();
 
-  console.log('patient: ', patient);
-  
-  
   const hospital = getHospital(patient.hospitalId);
   const event = getEvent(patient.eventId);
   
@@ -35,6 +32,8 @@ const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
         return <span className="text-xs bg-success/20 text-success/80 py-1 px-2 rounded-full">Stable</span>;
       case 'critical':
         return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">Critical</span>;
+      case 'deceased':
+        return <span className="text-xs bg-destructive/20 text-destructive/80 py-1 px-2 rounded-full">Deceased</span>;
       default:
         return <span className="text-xs bg-gray-200 text-gray-700 py-1 px-2 rounded-full">Unknown</span>;
     }
