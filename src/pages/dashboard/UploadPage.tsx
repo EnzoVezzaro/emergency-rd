@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, AlertCircle, CheckCircle2, FileText, Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useI18n } from '@/context/I18nContext';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
@@ -25,7 +26,7 @@ interface ExtendedUpload {
   ocr_status: string | null;
   processed: boolean | null;
   processing_results: { status?: string; count?: number } | null;
-  ocr_data: any | null;
+  ocr_data: Record<string, unknown> | null;
 }
 
 const UploadPage = () => {
@@ -38,6 +39,7 @@ const UploadPage = () => {
   const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
   
   const { toast } = useToast();
+  const { t } = useI18n();
   const { hospitals, currentEvent } = useAppContext();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,8 +62,8 @@ const UploadPage = () => {
   const handleUpload = async () => {
     if (!selectedFile || !selectedHospital || !currentEvent) {
       toast({
-        title: "Missing information",
-        description: "Please select a hospital and make sure an event is selected before uploading.",
+        title: t('uploadPage.errors.missingInfo'),
+        description: t('uploadPage.errors.missingInfoDescription'),
         variant: "destructive"
       });
       return;
@@ -106,8 +108,8 @@ const UploadPage = () => {
       setIsUploading(false);
       
       toast({
-        title: "Upload successful",
-        description: "Patient list has been uploaded and will be processed.",
+        title: t('uploadPage.errors.uploadSuccess'),
+        description: t('uploadPage.errors.uploadSuccessDescription'),
       });
       
       // Start OCR processing
@@ -133,8 +135,8 @@ const UploadPage = () => {
       setProcessingStatus('error');
       setUploadComplete(true);
       toast({
-        title: "Upload failed",
-        description: error instanceof Error ? error.message : "An unknown error occurred",
+        title: t('uploadPage.errors.uploadFailed'),
+        description: error instanceof Error ? error.message : t('uploadPage.errors.uploadFailedDescription'),
         variant: "destructive"
       });
     }
@@ -182,9 +184,9 @@ const UploadPage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Upload Patient Lists</h1>
+          <h1 className="text-3xl font-bold">{t('uploadPage.title')}</h1>
           <p className="text-gray-500 mt-1">
-            Upload images or documents of patient lists to be processed by AI
+            {t('uploadPage.description')}
           </p>
         </div>
         
@@ -192,23 +194,22 @@ const UploadPage = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Upload Patient List</CardTitle>
+            <CardTitle>{t('uploadPage.uploadCard.title')}</CardTitle>
             <CardDescription>
-              Upload images of handwritten or typed patient lists.
-              Our AI will extract patient information and update the database.
+              {t('uploadPage.uploadCard.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               <div className="grid gap-4">
                 <div>
-                  <Label htmlFor="hospital">Select Hospital</Label>
+                  <Label htmlFor="hospital">{t('uploadPage.uploadCard.hospitalSelect')}</Label>
                   <Select 
                     value={selectedHospital || ""} 
                     onValueChange={setSelectedHospital}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a hospital" />
+                      <SelectValue placeholder={t('uploadPage.uploadCard.hospitalPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       {hospitals.map(hospital => (
@@ -221,7 +222,7 @@ const UploadPage = () => {
                 </div>
               
                 <div className="grid w-full items-center gap-1.5">
-                  <Label htmlFor="picture">Upload patient list image</Label>
+                  <Label htmlFor="picture">{t('uploadPage.uploadCard.fileInput')}</Label>
                   <input
                     id="picture"
                     type="file"
@@ -248,8 +249,8 @@ const UploadPage = () => {
                       <div className="space-y-3">
                         <Upload className="mx-auto h-12 w-12 text-gray-400" />
                         <div>
-                          <p className="text-sm font-medium">Click to upload a file</p>
-                          <p className="text-xs text-gray-500">JPG, PNG, or PDF (max 10MB)</p>
+                        <p className="text-sm font-medium">{t('uploadPage.uploadCard.filePrompt')}</p>
+                        <p className="text-xs text-gray-500">{t('uploadPage.uploadCard.fileTypes')}</p>
                         </div>
                       </div>
                     )}
@@ -260,10 +261,9 @@ const UploadPage = () => {
               {uploadComplete && processingStatus === 'processing' && (
                 <Alert variant="default" className="bg-blue-50 border-blue-200">
                   <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
-                  <AlertTitle>Processing in progress</AlertTitle>
+                  <AlertTitle>{t('uploadPage.uploadCard.processing.title')}</AlertTitle>
                   <AlertDescription>
-                    The AI is currently extracting patient information from your uploaded document.
-                    This may take a few moments.
+                    {t('uploadPage.uploadCard.processing.description')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -271,9 +271,9 @@ const UploadPage = () => {
               {processingStatus === 'complete' && (
                 <Alert variant="default" className="bg-success/20 border-success/40">
                   <CheckCircle2 className="h-4 w-4 text-success" />
-                  <AlertTitle>Processing complete</AlertTitle>
+                  <AlertTitle>{t('uploadPage.uploadCard.complete.title')}</AlertTitle>
                   <AlertDescription>
-                    The patient list was successfully processed. Patient records were updated in the database.
+                    {t('uploadPage.uploadCard.complete.description')}
                   </AlertDescription>
                 </Alert>
               )}
@@ -281,21 +281,21 @@ const UploadPage = () => {
               {processingStatus === 'error' && (
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertTitle>Processing failed</AlertTitle>
+                  <AlertTitle>{t('uploadPage.uploadCard.error.title')}</AlertTitle>
                   <AlertDescription>
-                    There was an error processing the patient list. Please try again or contact support.
+                    {t('uploadPage.uploadCard.error.description')}
                   </AlertDescription>
                 </Alert>
               )}
               
               <Alert variant="default" className="bg-amber-50 border-amber-200">
                 <FileText className="h-4 w-4 text-amber-600" />
-                <AlertTitle>Important Information</AlertTitle>
+                <AlertTitle>{t('uploadPage.uploadCard.info.title')}</AlertTitle>
                 <AlertDescription>
                   <ul className="list-disc pl-4 space-y-1">
-                    <li>Make sure the document clearly shows patient names and relevant information.</li>
-                    <li>The AI processes best when text is clearly legible.</li>
-                    <li>Both typed and handwritten text can be processed, but typed text yields better results.</li>
+                    <li>{t('uploadPage.uploadCard.info.point1')}</li>
+                    <li>{t('uploadPage.uploadCard.info.point2')}</li>
+                    <li>{t('uploadPage.uploadCard.info.point3')}</li>
                   </ul>
                 </AlertDescription>
               </Alert>
@@ -306,10 +306,10 @@ const UploadPage = () => {
                   disabled={!selectedFile || isUploading || !selectedHospital || processingStatus === 'processing' || processingStatus === 'complete'}
                   className="ml-auto"
                 >
-                  {isUploading ? "Uploading..." : 
-                   processingStatus === 'processing' ? "Processing..." : 
-                   processingStatus === 'complete' ? "Processed" : 
-                   "Upload & Process"}
+                  {isUploading ? t('uploadPage.uploadCard.uploadButton.uploading') : 
+                   processingStatus === 'processing' ? t('uploadPage.uploadCard.uploadButton.processing') : 
+                   processingStatus === 'complete' ? t('uploadPage.uploadCard.uploadButton.complete') : 
+                   t('uploadPage.uploadCard.uploadButton.default')}
                 </Button>
               </div>
             </div>

@@ -32,5 +32,50 @@
     "uploadLists": "Subir Listas",
     "settings": "Configuración",
     "exitDashboard": "Salir del Panel"
+  },
+  "uploadPage": {
+    "title": "Subir Listas de Pacientes",
+    "description": "Suba imágenes o documentos de listas de pacientes para ser procesados por IA",
+    "uploadCard": {
+      "title": "Subir Lista de Pacientes",
+      "description": "Suba imágenes de listas de pacientes escritas a mano o mecanografiadas. Nuestra IA extraerá la información y actualizará la base de datos.",
+      "hospitalSelect": "Seleccionar Hospital",
+      "hospitalPlaceholder": "Seleccione un hospital",
+      "fileInput": "Subir imagen de lista de pacientes",
+      "filePrompt": "Haga clic para subir un archivo",
+      "fileTypes": "JPG, PNG o PDF (máx. 10MB)",
+      "processing": {
+        "title": "Procesando en progreso",
+        "description": "La IA está extrayendo información de pacientes de su documento. Esto puede tomar unos momentos."
+      },
+      "complete": {
+        "title": "Procesamiento completado",
+        "description": "La lista de pacientes fue procesada exitosamente. Los registros fueron actualizados en la base de datos."
+      },
+      "error": {
+        "title": "Error en el procesamiento",
+        "description": "Hubo un error procesando la lista de pacientes. Por favor intente nuevamente o contacte soporte."
+      },
+      "info": {
+        "title": "Información Importante",
+        "point1": "Asegúrese que el documento muestre claramente los nombres de los pacientes y la información relevante.",
+        "point2": "La IA procesa mejor cuando el texto es claramente legible.",
+        "point3": "Tanto texto mecanografiado como manuscrito puede ser procesado, pero el texto mecanografiado da mejores resultados."
+      },
+      "uploadButton": {
+        "default": "Subir y Procesar",
+        "uploading": "Subiendo...",
+        "processing": "Procesando...",
+        "complete": "Procesado"
+      }
+    },
+    "errors": {
+      "missingInfo": "Información faltante",
+      "missingInfoDescription": "Por favor seleccione un hospital y asegúrese que un evento esté seleccionado antes de subir.",
+      "uploadSuccess": "Subida exitosa",
+      "uploadSuccessDescription": "La lista de pacientes ha sido subida y será procesada.",
+      "uploadFailed": "Error al subir",
+      "uploadFailedDescription": "Ocurrió un error desconocido"
+    }
   }
 }

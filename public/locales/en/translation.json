@@ -32,5 +32,50 @@
     "uploadLists": "Upload Lists",
     "settings": "Settings",
     "exitDashboard": "Exit Dashboard"
+  },
+  "uploadPage": {
+    "title": "Upload Patient Lists",
+    "description": "Upload images or documents of patient lists to be processed by AI",
+    "uploadCard": {
+      "title": "Upload Patient List",
+      "description": "Upload images of handwritten or typed patient lists. Our AI will extract patient information and update the database.",
+      "hospitalSelect": "Select Hospital",
+      "hospitalPlaceholder": "Select a hospital",
+      "fileInput": "Upload patient list image",
+      "filePrompt": "Click to upload a file",
+      "fileTypes": "JPG, PNG, or PDF (max 10MB)",
+      "processing": {
+        "title": "Processing in progress",
+        "description": "The AI is currently extracting patient information from your uploaded document. This may take a few moments."
+      },
+      "complete": {
+        "title": "Processing complete",
+        "description": "The patient list was successfully processed. Patient records were updated in the database."
+      },
+      "error": {
+        "title": "Processing failed",
+        "description": "There was an error processing the patient list. Please try again or contact support."
+      },
+      "info": {
+        "title": "Important Information",
+        "point1": "Make sure the document clearly shows patient names and relevant information.",
+        "point2": "The AI processes best when text is clearly legible.",
+        "point3": "Both typed and handwritten text can be processed, but typed text yields better results."
+      },
+      "uploadButton": {
+        "default": "Upload & Process",
+        "uploading": "Uploading...",
+        "processing": "Processing...",
+        "complete": "Processed"
+      }
+    },
+    "errors": {
+      "missingInfo": "Missing information",
+      "missingInfoDescription": "Please select a hospital and make sure an event is selected before uploading.",
+      "uploadSuccess": "Upload successful",
+      "uploadSuccessDescription": "Patient list has been uploaded and will be processed.",
+      "uploadFailed": "Upload failed",
+      "uploadFailedDescription": "An unknown error occurred"
+    }
   }
 }
