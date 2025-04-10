@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -30,6 +30,10 @@ const EventsPage = () => {
     end_date: null as string | null,
     status: 'active'
   });
+
+  useEffect(()=>{
+    refreshData()
+  }, [])
 
   const resetForm = () => {
     setFormData({

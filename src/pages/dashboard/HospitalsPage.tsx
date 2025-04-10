@@ -31,6 +31,10 @@ const HospitalsPage = () => {
     contact_email: ''
   });
 
+  useEffect(()=>{
+    refreshData()
+  }, [])
+
   const resetForm = () => {
     setFormData({
       name: '',

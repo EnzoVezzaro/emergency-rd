@@ -7,7 +7,7 @@ import { useI18n } from '@/context/I18nContext';
 
 const DashboardHomePage = () => {
   const { t } = useI18n();
-  const { hospitals, patients, events } = useAppContext();
+  const { hospitals, patients, events } = useAppContext(); 
   
   const activeEvents = events.filter(event => event.status === 'active');
 

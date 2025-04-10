@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useI18n } from '@/context/I18nContext';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
@@ -24,6 +24,10 @@ const PatientsPage = () => {
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const patientsPerPage = 10;
+
+  useEffect(()=>{
+    refreshData()
+  }, [])
   
   const [formData, setFormData] = useState({
     full_name: '',

@@ -1,5 +1,5 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import DashboardSidebar from './DashboardSidebar';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
