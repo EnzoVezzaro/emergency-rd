@@ -9,10 +9,12 @@ import MobileLayout from '@/components/layout/MobileLayout';
 import HospitalStatusBadge from '@/components/common/HospitalStatusBadge';
 import DonationNeedBadge from '@/components/common/DonationNeedBadge';
 import { useAppContext } from '@/context/AppContext';
+import { useI18n } from '@/context/I18nContext';
 
 const HospitalDetailsPage = () => {
   const { hospitalId } = useParams<{ hospitalId: string }>();
   const { hospitals } = useAppContext();
+  const { t } = useI18n();
   
   const hospital = hospitals.find(h => h.id === hospitalId);
   
@@ -97,7 +99,7 @@ const HospitalDetailsPage = () => {
                           )}
                         </div>
                         <p className="text-xs text-gray-500 mt-1">
-                          Admitted: {new Date(patient.dateAdmitted).toLocaleString()}
+                          {t('patientsPage.list.headers.admitted')}: {new Date(patient.dateAdmitted).toLocaleString()}
                         </p>
                       </div>
                     ))}

@@ -336,8 +336,8 @@
         "gender": "Género",
         "hospital": "Hospital",
         "condition": "Condición",
-        "admitted": "Admitido",
-        "actions": "Acciones"
+        "admitted": "Actualizado",
+        "actions": "Acciones",
       },
       "status": {
         "admitted": "Admitido",

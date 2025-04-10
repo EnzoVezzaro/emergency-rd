@@ -303,7 +303,7 @@
       "headers": {
         "hospital": "Hospital",
         "condition": "Condition",
-        "admitted": "Admitted"
+        "admitted": "Updated"
       },
       "status": {
         "stable": "Stable",
