@@ -182,6 +182,7 @@
         "name": "Nombre",
         "location": "Ubicación",
         "status": "Estado",
+        "patientsCount": "Pacientes",
         "actions": "Acciones"
       },
       "status": {

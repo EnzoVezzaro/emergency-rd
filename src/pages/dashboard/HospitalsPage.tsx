@@ -15,7 +15,7 @@ import { useI18n } from '@/context/I18nContext';
 
 const HospitalsPage = () => {
   const { hospitals, isLoading, refreshData } = useAppContext();
-  const { toast } = useToast();
+  const { toast } = useToast(); 
   const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -185,6 +185,7 @@ const HospitalsPage = () => {
                     <TableHead>{t('hospitalsPage.network.headers.name')}</TableHead>
                     <TableHead>{t('hospitalsPage.network.headers.location')}</TableHead>
                     <TableHead className="text-center">{t('hospitalsPage.network.headers.status')}</TableHead>
+                    <TableHead className="text-center">{t('hospitalsPage.network.headers.patientsCount')}</TableHead>
                     <TableHead className="text-right">{t('hospitalsPage.network.headers.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -192,7 +193,7 @@ const HospitalsPage = () => {
                   {hospitals.map((hospital) => (
                     <TableRow key={hospital.id}>
                       <TableCell className="font-medium">{hospital.name}</TableCell>
-                      <TableCell>{hospital.city}, {hospital.state}</TableCell>
+                      <TableCell>{hospital.address}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center">
                           <span 
@@ -206,6 +207,7 @@ const HospitalsPage = () => {
                           </span>
                         </div>
                       </TableCell>
+                      <TableCell>{hospital.patients && hospital.patients.length > 0 ? hospital.patients.length : 0}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end space-x-2">
                           <Button variant="ghost" size="icon" onClick={() => handleEdit(hospital)}>

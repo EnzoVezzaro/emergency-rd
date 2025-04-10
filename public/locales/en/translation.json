@@ -186,6 +186,7 @@
         "name": "Name",
         "location": "Location",
         "status": "Status",
+        "patientsCount": "Patients",
         "actions": "Actions"
       },
       "status": {

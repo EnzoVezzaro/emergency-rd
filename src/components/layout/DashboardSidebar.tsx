@@ -34,7 +34,7 @@ const DashboardSidebar = () => {
       <SidebarHeader className="flex items-center px-4 py-6">
         <div className="flex items-center space-x-2">
           <svg width="25" height="25" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none" fill-rule="evenodd">
+            <g fill="none" fillRule="evenodd">
               <path fill="#E63946" d="M50,5 C72,5 90,23 90,45 C90,70 50,95 50,95 C50,95 10,70 10,45 C10,23 28,5 50,5 Z"/>
               <path fill="#FFFFFF" d="M50,32 C54,28 61,28 65,32 C69,36 69,43 65,47 L50,62 L35,47 C31,43 31,36 35,32 C39,28 46,28 50,32 Z"/>
             </g>

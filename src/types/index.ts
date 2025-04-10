@@ -12,6 +12,7 @@ export type Hospital = {
   longitude: number;
   donationNeeds: DonationNeed[];
   patients: Patient[];
+  victims?: any[]
 };
 
 export type DonationNeed = {
