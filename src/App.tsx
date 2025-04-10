@@ -8,6 +8,10 @@ import { AppProvider } from "@/context/AppContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+// Theme constants (could be moved to a config file)
+const SETTINGS_STORAGE_KEY = 'appSettings';
+const THEME_DARK_CLASS = 'dark'; // Tailwind dark mode class
+
 // Auth components
 import { LoginPage } from "./pages/LoginPage";
 
@@ -64,6 +68,30 @@ const App = () => {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // --- Theme Loading Effect ---
+  useEffect(() => {
+    const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    let currentTheme = 'light'; // Default theme
+
+    if (storedSettings) {
+      try {
+        const parsedSettings = JSON.parse(storedSettings);
+        if (parsedSettings.theme === 'dark' || parsedSettings.theme === 'light') {
+          currentTheme = parsedSettings.theme;
+        }
+      } catch (error) {
+        console.error("Failed to parse theme from localStorage:", error);
+      }
+    }
+
+    // Apply the theme class
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark'); // Remove existing theme classes
+    root.classList.add(currentTheme); // Add the current theme class
+    console.log(`Applied initial theme: ${currentTheme}`);
+
+  }, []); // Run only once on initial app load
 
   return (
     <QueryClientProvider client={queryClient}>
