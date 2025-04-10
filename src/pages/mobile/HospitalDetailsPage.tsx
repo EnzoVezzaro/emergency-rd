@@ -89,6 +89,7 @@ const HospitalDetailsPage = () => {
                             <span className={`text-xs px-2 py-1 rounded-full ${
                               patient.condition === 'stable' ? 'bg-success/20 text-success' : 
                               patient.condition === 'critical' ? 'bg-destructive/20 text-destructive' : 
+                              patient.condition === 'deceased' ? 'bg-destructive/20 text-destructive' : 
                               'bg-gray-200 text-gray-700'
                             }`}>
                               {patient.condition.charAt(0).toUpperCase() + patient.condition.slice(1)}
