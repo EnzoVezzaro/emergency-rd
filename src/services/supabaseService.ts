@@ -39,6 +39,20 @@ export type DbVictim = {
   updated_at: string | null;
 };
 
+export type DbUpload = {
+  id: string;
+  file_path: string;
+  file_type: string;
+  hospital_id: string | null;
+  event_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  ocr_status: string | null;
+  processed: boolean | null;
+  processing_results: any | null;
+  ocr_data: Json | null;
+};
+
 export type DbDonationNeed = {
   id: string;
   hospital_id: string | null;
@@ -75,7 +89,7 @@ export const getHospital = async (id: string): Promise<DbHospital | null> => {
     return null;
   }
   
-  return data;
+  return data?.[0] || null;
 };
 
 export const updateHospital = async (id: string, updateData: Partial<DbHospital>): Promise<DbHospital | null> => {
@@ -148,6 +162,21 @@ export const getEvent = async (id: string): Promise<DbEvent | null> => {
   }
   
   return data;
+};
+
+export const getLastEvent = async (): Promise<DbUpload | null> => {
+  const { data, error } = await supabase
+    .from("uploads")
+    .select("*")
+    .order("created_at", { ascending: false })
+    .limit(1);
+  
+  if (error) {
+    console.error("Error fetching event:", error);
+    return null;
+  }
+  
+  return data?.[0] || null;
 };
 
 export const updateEvent = async (id: string, updateData: Partial<DbEvent>): Promise<DbEvent | null> => {

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Hospital, Event, Patient } from '../types';
+import { Hospital, Event, Patient, Upload } from '../types';
 import { mockHospitals, mockEvents, mockPatients } from '../data/mockData';
 import { useToast } from "@/components/ui/use-toast";
 import { 
@@ -11,7 +11,9 @@ import {
   getHospitalEventsMap,
   mapDbHospitalToHospital,
   mapDbVictimToPatient,
-  DbDonationNeed
+  DbDonationNeed,
+  getLastEvent,
+  DbUpload
 } from '@/services/supabaseService';
 
 type AppContextType = {
@@ -19,6 +21,7 @@ type AppContextType = {
   events: Event[];
   patients: Patient[];
   currentEvent: Event | null;
+  lastUpdate: Upload | null;
   setCurrentEvent: (event: Event | null) => void;
   searchPatients: (name: string) => Patient[];
   getHospital: (id: string) => Hospital | undefined;
@@ -34,6 +37,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
   const [currentEvent, setCurrentEvent] = useState<Event | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<DbUpload | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { toast } = useToast();
 
@@ -56,13 +60,17 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     try {
       // Fetch data from Supabase
-      const [dbHospitals, dbEvents, dbVictims, dbDonationNeeds, hospitalEventsMap] = await Promise.all([
+      const [dbHospitals, dbEvents, dbVictims, dbDonationNeeds, hospitalEventsMap, lastUpdate] = await Promise.all([
         fetchHospitals(),
         fetchEvents(),
         fetchVictims(),
         fetchDonationNeeds(),
-        getHospitalEventsMap()
+        getHospitalEventsMap(),
+        getLastEvent()
       ]);
+
+      // Save last update
+      setLastUpdate(lastUpdate);
       
       // Map DB data to our app types
       const mappedHospitals: Hospital[] = dbHospitals.map(dbHospital => {
@@ -149,6 +157,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       events,
       patients,
       currentEvent,
+      lastUpdate,
       setCurrentEvent,
       searchPatients,
       getHospital,

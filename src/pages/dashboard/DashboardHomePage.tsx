@@ -1,19 +1,40 @@
 import React, { useEffect } from 'react';
+import { formatDistanceToNow } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Hospital, Users, Clock, AlertCircle } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
 import { useI18n } from '@/context/I18nContext';
+import { es, enUS } from 'date-fns/locale'
 
 const DashboardHomePage = () => {
   const { t } = useI18n();
-  const { hospitals, patients, events, refreshData } = useAppContext(); 
+  const { language } = useI18n();
+  const { hospitals, patients, events, refreshData, lastUpdate } = useAppContext(); 
   
   const activeEvents = events.filter(event => event.status === 'active');
 
   useEffect(()=>{
     refreshData()
   }, [])
+
+  // console.log('event: ', events);
+  const getAffectedCount = (event) =>{
+    let count = 0;
+    event.affectedHospitalIds.map((ah)=>{
+      hospitals.map((h)=>{
+        if (ah === h.id){
+          count += h.patients.length
+        }
+      })
+    })
+
+    return count;
+  }
+  
+  events.map((ev)=>{
+    return ev.peopleAffected = getAffectedCount(ev);
+  })
 
   return (
     <DashboardLayout>
@@ -76,8 +97,17 @@ const DashboardHomePage = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
-                <Clock className="h-6 w-6 text-purple-500 mr-2" />
-                <span className="text-2xl font-bold">4m ago</span>
+                <span className="text-sm font-bold">
+                  {
+                    lastUpdate?.created_at && (
+                      formatDistanceToNow(new Date(lastUpdate.created_at), { 
+                        addSuffix: true,
+                        locale: language === 'es' ? es : enUS
+                      })
+                    )
+                  }
+                  { !lastUpdate && 'Loading...' }
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -100,12 +130,17 @@ const DashboardHomePage = () => {
                         </span>
                       </div>
                       <p className="text-sm text-gray-600 mb-2">{event.description}</p>
-                      <div className="flex text-sm text-gray-500">
+                      <div className="flex text-sm text-gray-500 justify-between">
                         <span className="mr-4">
                           {t('dashboardHome.sections.labels.hospitals')}: {event.affectedHospitalIds.length}
                         </span>
                         <span>
                           {t('dashboardHome.sections.labels.started')}: {new Date(event.startDate).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <div className="flex text-sm text-gray-500 justify-start">
+                        <span className="">
+                          {t('dashboardHome.sections.labels.involved')}: {event.peopleAffected}
                         </span>
                       </div>
                     </div>
@@ -136,7 +171,7 @@ const DashboardHomePage = () => {
                         {t('dashboardHome.sections.labels.status')}: {t(`dashboardHome.sections.hospitalStatus.${hospital.status}`)}
                       </span>
                       <span className="text-gray-500">
-                        {t('dashboardHome.sections.labels.patients')}: {hospital.patients.length}
+                        {t('dashboardHome.sections.labels.involved')}: {hospital.patients.length}
                       </span>
                     </div>
                   </div>

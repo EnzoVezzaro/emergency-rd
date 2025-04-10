@@ -41,4 +41,19 @@ export type Event = {
   type: 'natural_disaster' | 'accident' | 'other';
   status: 'active' | 'resolved';
   affectedHospitalIds: string[];
+  peopleAffected?: number;
+};
+
+export type Upload = {
+  id: string;
+  file_path: string;
+  file_type: string;
+  hospital_id: string | null;
+  event_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  ocr_status: string | null;
+  processed: boolean | null;
+  processing_results: any | null;
+  ocr_data: Json | null;
 };

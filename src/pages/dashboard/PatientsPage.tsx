@@ -136,15 +136,13 @@ const PatientsPage = () => {
   // Calculate metrics
   const totalPatients = patients.length;
   const hospitalizedPatients = patients.filter(p => p.hospitalId).length;
-  const criticalPatients = patients.filter(p => p.condition === 'critical').length;
+  const criticalPatients = patients.filter(p => p.condition === 'critical' || p.condition === 'deceased').length;
   
   // Pagination
   const indexOfLastPatient = currentPage * patientsPerPage;
   const indexOfFirstPatient = indexOfLastPatient - patientsPerPage;
   const currentPatients = patients.slice(indexOfFirstPatient, indexOfLastPatient);
   const totalPages = Math.ceil(patients.length / patientsPerPage);
-  console.log('currentPatients: ', currentPatients, patients);
-
   return (
     <DashboardLayout>
       <div className="space-y-6">
