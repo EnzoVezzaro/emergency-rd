@@ -30,7 +30,7 @@ const DashboardSidebar = () => {
       <SidebarHeader className="flex items-center px-4 py-6">
         <div className="flex items-center space-x-2">
           <LifeBuoy className="h-8 w-8 text-primary" />
-          <span className="font-semibold text-lg">Hope Beacon</span>
+          <span className="font-semibold text-lg">Emergency Response System</span>
         </div>
         <SidebarTrigger className="ml-auto" />
       </SidebarHeader>

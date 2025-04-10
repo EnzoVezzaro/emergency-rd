@@ -10,7 +10,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex flex-col items-center justify-center p-4">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-primary-900 mb-2">Hope Beacon</h1>
+        <h1 className="text-4xl font-bold text-primary-900 mb-2">Emergency Response System</h1>
         <p className="text-xl text-gray-600 max-w-lg mx-auto">
           Emergency response system connecting families with loved ones during crisis events
         </p>
@@ -93,7 +93,7 @@ const Index = () => {
       </div>
       
       <footer className="mt-12 text-center text-sm text-gray-500">
-        <p>© 2025 Hope Beacon Connect. All rights reserved.</p>
+        <p>© 2025 Emergency Response System. All rights reserved.</p>
         <p className="mt-1">Helping communities stay connected during emergencies.</p>
       </footer>
     </div>
