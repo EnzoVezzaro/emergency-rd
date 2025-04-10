@@ -305,7 +305,9 @@
       },
       "status": {
         "stable": "Stable",
-        "critical": "Critical"
+        "critical": "Critical",
+        "deceased": "Deceased",
+        "unknown": "Unknown"
       }
     },
     "sheet": {

@@ -342,7 +342,9 @@
         "discharged": "Dado de Alta",
         "transferred": "Transferido",
         "stable": "Estable",
-        "critical": "Crítico"
+        "critical": "Crítico",
+        "deceased": "Fallecido",
+        "unknown": "Desconocido"
       }
     },
     "sheet": {

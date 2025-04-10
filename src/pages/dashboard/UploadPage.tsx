@@ -37,7 +37,7 @@ interface ExtendedUpload {
 // Define patient schema
 const PatientSchema = z.object({
   full_name: z.string().min(1),
-  status: z.enum(['stable', 'critical', 'unknown']),
+  status: z.enum(['stable', 'critical', 'deceased', 'unknown']),
   additional_info: z.object({
     age: z.number().int().min(0).max(130).nullable().optional(),
   }).optional(),
@@ -98,7 +98,7 @@ const UploadPage = () => {
       // Define patient schema with Zod
       const PatientSchema = z.object({
         full_name: z.string().min(1).describe("Patient's full name"),
-        status: z.enum(['stable', 'critical', 'unknown']).describe("Patient's condition"),
+        status: z.enum(['stable', 'critical', 'deceased', 'unknown']).describe("Patient's condition"),
         additional_info: z.object({
             age: z.number().int().min(0).max(130).nullable().optional().describe("Patient's age (optional)"),
             // Allow any other additional fields
@@ -143,7 +143,7 @@ const UploadPage = () => {
         [
           {
             "full_name": "string (patient's full name)",
-            "status": "string (must be 'stable', 'critical', or 'unknown')", // if there's nothing use 'unknown'
+            "status": "string (must be 'stable', 'critical', 'deceased', or 'unknown')", // if there's nothing use 'unknown'
             "additional_info": {
               "age": number (integer age, or null if not found/readable),
               ...(other info)
@@ -523,13 +523,14 @@ const UploadPage = () => {
                         value={patient.status}
                         onChange={(e) => {
                           const updated = [...extractedPatients];
-                          updated[index].status = e.target.value as 'stable' | 'critical' | 'unknown';
+                          updated[index].status = e.target.value as 'stable' | 'critical' | 'deceased' | 'unknown';
                           setExtractedPatients(updated);
                         }}
                         className="bg-transparent border-none focus:ring-1 focus:ring-primary"
                       >
                         <option value="stable">Stable</option>
                         <option value="critical">Critical</option>
+                        <option value="deceased">Deceased</option>
                         <option value="unknown">Unknown</option>
                       </select>
                     </td>
