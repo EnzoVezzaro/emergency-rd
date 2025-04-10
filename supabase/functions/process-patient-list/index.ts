@@ -1,6 +1,8 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { GoogleGenAI } from "npm:@google/genai";
+import { z } from "npm:zod";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -93,42 +95,86 @@ serve(async (req) => {
     }
     
     try {
-      // Check file size before processing (limit to 5MB)
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      if (fileData.size > maxSize) {
-        throw new Error(`File too large (${fileData.size} bytes). Maximum allowed: ${maxSize} bytes`);
+      // Define patient schema with Zod
+      // Simplified schema without recursion risks
+      const PatientSchema = z.object({
+        full_name: z.string().min(2),
+        status: z.enum(['stable', 'critical', 'unknown']),
+        additional_info: z.object({
+          age: z.number().int().min(0).max(120)
+        }).strict().optional()
+      });
+
+      // Initialize Google GenAI
+      const genai = new GoogleGenAI(Deno.env.get('GOOGLE_API_KEY') || '');
+      
+      // Process image with GenAI
+      const fileBuffer = await fileData.arrayBuffer();
+      const base64Image = btoa(String.fromCharCode(...new Uint8Array(fileBuffer)));
+
+      let base64Data = base64Image;
+      let mimeType = 'image/png'; // Default MIME type
+      if (base64Image.startsWith('data:image/png;base64,')) {
+        base64Data = base64Image.split(',')[1];
+      } else if (base64Image.startsWith('data:image/jpeg;base64,')) {
+        mimeType = 'image/jpeg';
+        base64Data = base64Image.split(',')[1];
+      } else {
+        throw new Error('Failed to parse the image MimeType');
       }
 
-      // Process file in chunks to avoid memory issues
-      const chunkSize = 1024 * 1024; // 1MB chunks
-      const fileBuffer = await fileData.arrayBuffer();
+      try {
+        // Try to decode the base64 data
+        const buffer = Buffer.from(base64Data, 'base64');
+        // If decoding is successful, re-encode it to ensure it's in the correct format
+        base64Data = buffer.toString('base64');
+      } catch (error) {
+        // If decoding fails, assume it's not a valid base64 string and log the error
+        console.error('Error decoding base64 string:', error);
+        throw new Error('Failed to parse the image Base64');
+      }
       
-      // Simple OCR simulation with chunk processing
-      const simulatedPatients = [];
-      const patientTemplates = [
-        { full_name: "John Smith", status: "stable", additional_info: { age: 42, room: "301A" } },
-        { full_name: "Sarah Jones", status: "critical", additional_info: { age: 56, room: "ICU-4" } },
-        { full_name: "Michael Brown", status: "stable", additional_info: { age: 35, room: "205B" } },
-        { full_name: "Emma Wilson", status: "stable", additional_info: { age: 29, room: "310C" } },
-        { full_name: "Robert Clark", status: "critical", additional_info: { age: 61, room: "ICU-7" } },
-      ];
+      const prompt = `
+        Extract patient information from this hospital document.
+        Return JSON array with each patient containing:
+        - full_name (string)
+        - status (stable/critical/unknown)
+        - additional_info (object containing age)
+        Keep the response under 100KB.
+        GIVE THE RESPONSE IN JSON FORMAT.
+      `;
 
-      // Process in chunks to avoid memory overload
-      for (let i = 0; i < fileBuffer.byteLength; i += chunkSize) {
-        const chunk = new Uint8Array(fileBuffer.slice(i, i + chunkSize));
-        // Simulate processing each chunk
-        const patientsFromChunk = Math.min(5, patientTemplates.length);
-        simulatedPatients.push(...patientTemplates.slice(0, patientsFromChunk));
-        
-        // Add small delay between chunks
-        await new Promise(resolve => setTimeout(resolve, 100));
+      const response = await genai.models.generateContent({
+        model: "gemini-2.0-flash-exp-image-generation",
+        config: {
+          responseModalities: ["Text", "Image"],
+        },
+        contents: [
+          { text: prompt },
+          {
+            inlineData: {
+              mimeType: mimeType,
+              data: base64Data,
+            },
+          },
+        ]
+      });
+
+      // Parse and validate the response
+      let patients;
+      try {
+        const jsonString = response.text();
+        const rawPatients = JSON.parse(jsonString);
+        patients = z.array(PatientSchema).parse(rawPatients);
+      } catch (error) {
+        console.error('Error parsing GenAI response:', error);
+        throw new Error('Failed to parse patient data from document');
       }
     
-      // Process database operations in batches
-      const batchSize = 10;
+      // Process database operations
       let processedCount = 0;
       
-      // First update the upload record
+      // Update upload status to processing
       const { error: updateError } = await supabase
         .from('uploads')
         .update({
@@ -139,95 +185,45 @@ serve(async (req) => {
 
       if (updateError) throw updateError;
 
-      // Process patients in batches
-      for (let i = 0; i < simulatedPatients.length; i += batchSize) {
-        const batch = simulatedPatients.slice(i, i + batchSize);
-        const { error: batchError } = await supabase
+      // Insert validated patients
+      for (const patient of patients) {
+        const { error } = await supabase
           .from('victims')
-          .insert(batch.map(patient => ({
+          .insert({
             full_name: patient.full_name,
             status: patient.status,
             hospital_id: upload.hospital_id,
             event_id: upload.event_id,
             additional_info: patient.additional_info
-          })));
-
-        if (batchError) {
-          console.error('Error inserting batch:', {
-            batchIndex: i,
-            error: batchError
           });
-          // Continue with next batches even if one fails
-        } else {
-          processedCount += batch.length;
-        }
+
+        if (!error) processedCount++;
       }
 
-      // Finalize upload record
+      // Finalize upload record with extracted data
       const { error: finalizeError } = await supabase
         .from('uploads')
         .update({
           ocr_status: 'completed',
-          ocr_data: { patients: simulatedPatients },
+          ocr_data: { patients },
           processed: true,
           processing_results: { 
-            status: processedCount > 0 ? 'partial' : 'failed',
+            status: processedCount > 0 ? 'success' : 'failed',
             count: processedCount,
-            total: simulatedPatients.length
+            total: patients.length
           }
         })
         .eq('id', uploadId);
 
       if (finalizeError) throw finalizeError;
-        
-      if (updateError) {
-        console.error('Error updating upload:', {
-          error: updateError,
-          uploadId: uploadId,
-          timestamp: new Date().toISOString()
-        });
-        throw new Error(`Failed to update upload: ${updateError.message}`);
-      }
-      
-      // Insert patients into the victims table
-      const hospital_id = upload.hospital_id;
-      const event_id = upload.event_id;
-      const insertedPatients = [];
-      
-      for (const patient of simulatedPatients) {
-        const { data, error: insertError } = await supabase
-          .from('victims')
-          .insert({
-            full_name: patient.full_name,
-            status: patient.status,
-            hospital_id: hospital_id,
-            event_id: event_id,
-            additional_info: patient.additional_info
-          })
-          .select();
-          
-        if (insertError) {
-          console.error('Error inserting patient:', {
-            error: insertError,
-            patient: patient.full_name,
-            timestamp: new Date().toISOString()
-          });
-          // Continue with other patients even if one fails
-        } else {
-          insertedPatients.push(data);
-        }
-      }
-      
-      if (insertedPatients.length === 0) {
-        throw new Error('Failed to insert any patients');
-      }
     
       return new Response(
         JSON.stringify({ 
           success: true, 
           message: 'Patient list processed successfully',
-          patientsCount: simulatedPatients.length,
-          insertedCount: insertedPatients.length
+          patientsCount: patients.length,
+          insertedCount: processedCount,
+          patients: patients.slice(0, 5) // Return first 5 for verification
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
