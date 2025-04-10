@@ -165,6 +165,34 @@
   },
   "hospitalsPage": {
     "title": "Hospitales",
+    "noHospitals": "No se encontraron hospitales.",
+    "backLink": "Volver a Hospitales",
+    "notFound": {
+      "message": "Hospital no encontrado.",
+      "link": "Ver todos los hospitales"
+    },
+    "hospitalStatus": {
+      "receiving": "Recibiendo Pacientes",
+      "full": "Lleno",
+      "closed": "Cerrado",
+      "unknown": "Desconocido"
+    },
+    "tabs": {
+      "patients": "Listas de Pacientes",
+      "donationNeeds": "Necesidades de Donación"
+    },
+    "patients": {
+      "title": "Pacientes Admitidos",
+      "updatedTime": "Actualizado hace 4 minutos",
+      "admitted": "Admitido",
+      "noRecords": "No hay registros de pacientes disponibles."
+    },
+    "donationNeeds": {
+      "title": "Necesidades de Donación Actuales",
+      "priority": "Prioridad",
+      "button": "Contactar para Donación",
+      "noNeeds": "No hay necesidades de donación en este momento."
+    },
     "description": "Gestionar hospitales y la información de su estado.",
     "addHospitalButton": "Añadir Hospital",
     "stats": {
@@ -337,7 +365,7 @@
         "hospital": "Hospital",
         "condition": "Condición",
         "admitted": "Actualizado",
-        "actions": "Acciones",
+        "actions": "Acciones"
       },
       "status": {
         "admitted": "Admitido",
@@ -417,5 +445,90 @@
         "description": "No se pudo guardar el paciente. Por favor revise sus datos e intente de nuevo."
       }
     }
+  },
+  "donatePage": {
+    "title": "Donaciones y Ayuda",
+    "bloodDonations": {
+      "title": "Donaciones de Sangre",
+      "type": "Tipo",
+      "allTypes": "Todos los tipos de sangre",
+      "button": "Programar Donación de Sangre",
+      "noNeeds": "No hay necesidades de donación de sangre en este momento."
+    },
+    "supplyDonations": {
+      "title": "Donaciones de Suministros",
+      "button": "Donar Suministros",
+      "noNeeds": "No hay necesidades de donación de suministros en este momento."
+    },
+    "volunteerHelp": {
+      "title": "Ayuda de Voluntarios",
+      "button": "Voluntariado Ahora",
+      "noNeeds": "No hay necesidades de voluntarios en este momento."
+    }
+  },
+  "urgency": {
+    "critical": "Crítico",
+    "high": "Alto",
+    "normal": "Normal"
+  },
+  "hospitalDetailsPage": {
+    "backLink": "Volver a Hospitales",
+    "notFound": {
+      "message": "Hospital no encontrado.",
+      "link": "Ver todos los hospitales"
+    },
+    "hospitalStatus": {
+      "receiving": "Recibiendo Pacientes",
+      "full": "Capacidad Lleno",
+      "closed": "Cerrado",
+      "unknown": "Desconocido"
+    },
+    "tabs": {
+      "patients": "Listas de Pacientes",
+      "donationNeeds": "Necesidades de Donación"
+    },
+    "patients": {
+      "title": "Pacientes Admitidos",
+      "updatedTime": "Actualizado hace 4 minutos",
+      "admitted": "Admitido",
+      "noRecords": "No hay registros de pacientes disponibles."
+    },
+    "donationNeeds": {
+      "title": "Necesidades de Donación Actuales",
+      "priority": "Prioridad",
+      "button": "Contactar para Donación",
+      "noNeeds": "No hay necesidades de donación en este momento."
+    }
+  },
+  "patientCondition": {
+    "stable": "Estable",
+    "critical": "Crítico",
+    "deceased": "Fallecido",
+    "unknown": "Desconocido"
+  },
+  "searchPage": {
+    "title": "Buscar",
+    "inputPlaceholder": "Ingrese el nombre del paciente",
+    "buttonText": "Buscar",
+    "resultsTitle": "Resultados de la búsqueda",
+    "noResults": {
+      "message": "No se encontraron resultados para \"{{searchQuery}}\"",
+      "suggestion": "Intente con un término de búsqueda diferente."
+    },
+    "default": {
+      "message": "Ingrese un nombre para buscar pacientes.",
+      "suggestion": "Comience a escribir para ver los resultados."
+    }
+  },
+  "mapPage": {
+    "title": "Mapa",
+    "eventActive": {
+      "title": "Evento Activo"
+    },
+    "placeholder": {
+      "text": "Los datos del mapa no están disponibles actualmente.",
+      "button": "Actualizar Mapa"
+    },
+    "viewMap": "Ver mapa en pantalla completa"
   }
 }

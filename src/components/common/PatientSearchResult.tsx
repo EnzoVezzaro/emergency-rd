@@ -51,7 +51,7 @@ const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
           </div>
           {event && (
             <p className="text-sm text-gray-500 mt-1">
-              From: {event.name}
+              {t('patientsPage.sheet.fields.event')}: {event.name}
             </p>
           )}
         </div>
@@ -68,7 +68,7 @@ const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
           
           <div className="flex items-center text-sm text-gray-600">
             <Calendar size={16} className="mr-2 text-gray-500" />
-            <span>{t('patientsPage.list.admitted')} {formatDate(patient.dateAdmitted)}</span>
+            <span>{t('patientsPage.list.headers.admitted')} - {formatDate(patient.dateAdmitted)}</span>
           </div>
         </div>
       </CardContent>

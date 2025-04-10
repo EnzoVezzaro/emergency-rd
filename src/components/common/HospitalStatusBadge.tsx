@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useI18n } from '@/context/I18nContext';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
@@ -8,16 +9,18 @@ type HospitalStatusBadgeProps = {
 };
 
 const HospitalStatusBadge = ({ status }: HospitalStatusBadgeProps) => {
+  const { t } = useI18n();
+  
   const getStatusConfig = (status: string) => {
     switch (status) {
       case 'receiving':
-        return { label: 'Receiving Patients', className: 'bg-success text-white' };
+        return { label: t('hospitalsPage.hospitalStatus.receiving'), className: 'bg-success text-white' };
       case 'full':
-        return { label: 'Full Capacity', className: 'bg-warning text-white' };
+        return { label: t('hospitalsPage.hospitalStatus.full'), className: 'bg-warning text-white' };
       case 'closed':
-        return { label: 'Closed', className: 'bg-destructive text-white' };
+        return { label: t('hospitalsPage.hospitalStatus.closed'), className: 'bg-destructive text-white' };
       default:
-        return { label: 'Unknown', className: 'bg-gray-400 text-white' };
+        return { label: t('hospitalsPage.hospitalStatus.unknown'), className: 'bg-gray-400 text-white' };
     }
   };
 

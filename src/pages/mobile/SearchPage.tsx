@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import MobileLayout from '@/components/layout/MobileLayout';
 import PatientSearchResult from '@/components/common/PatientSearchResult';
 import { useAppContext } from '@/context/AppContext';
+import { useI18n } from '@/context/I18nContext'; // Import useI18n
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -13,6 +14,7 @@ const SearchPage = () => {
   const [hasSearched, setHasSearched] = useState(false);
   
   const { searchPatients, patients } = useAppContext();
+  const { t } = useI18n(); // Initialize useI18n
 
   useEffect(()=>{
     setHasSearched(true);
@@ -28,12 +30,12 @@ const SearchPage = () => {
   return (
     <MobileLayout>
       <div className="p-4">
-        <h1 className="text-2xl font-bold mb-4">Find a Person</h1>
+        <h1 className="text-2xl font-bold mb-4">{t('searchPage.title')}</h1>
         
         <div className="mb-6">
           <div className="flex space-x-2">
             <Input
-              placeholder="Enter name to search"
+              placeholder={t('searchPage.inputPlaceholder')}
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
@@ -48,7 +50,7 @@ const SearchPage = () => {
             />
             <Button onClick={handleSearch} disabled={!searchQuery.trim()}>
               <Search size={20} className="mr-2" />
-              Search
+              {t('searchPage.buttonText')}
             </Button>
           </div>
         </div>
@@ -57,16 +59,16 @@ const SearchPage = () => {
           <div>
             {searchResults.length > 0 ? (
               <div>
-                <h2 className="text-lg font-medium mb-4">Search Results</h2>
+                <h2 className="text-lg font-medium mb-4">{t('searchPage.resultsTitle')}</h2>
                 {searchResults.map((patient) => (
                   <PatientSearchResult key={patient.id} patient={patient} />
                 ))} 
               </div>
             ) : (
               <div className="text-center p-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-                <p className="text-gray-600 mb-2">No results found for "{searchQuery}"</p>
+                <p className="text-gray-600 mb-2">{t('searchPage.noResults.message', { searchQuery })}</p>
                 <p className="text-sm text-gray-500">
-                  Try using a different name or check back later as lists are updated regularly.
+                  {t('searchPage.noResults.suggestion')}
                 </p>
               </div>
             )}
@@ -75,9 +77,9 @@ const SearchPage = () => {
         
         {!hasSearched && (
           <div className="text-center p-8 bg-gray-50 rounded-lg border border-dashed border-gray-200">
-            <p className="text-gray-600 mb-2">Search for a person affected by an emergency event</p>
+            <p className="text-gray-600 mb-2">{t('searchPage.default.message')}</p>
             <p className="text-sm text-gray-500">
-              Enter the name of the person you are looking for to see which hospital they may be at.
+              {t('searchPage.default.suggestion')}
             </p>
           </div>
         )}

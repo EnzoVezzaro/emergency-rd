@@ -170,6 +170,12 @@
   "hospitalsPage": {
     "title": "Hospitals",
     "description": "Manage hospitals and their status information.",
+    "hospitalStatus": {
+      "receiving": "Receiving Patients",
+      "full": "Full Capacity",
+      "closed": "Closed",
+      "unknown": "Unknown"
+    },
     "addHospitalButton": "Add Hospital",
     "stats": {
       "total": "Total Hospitals",
@@ -181,10 +187,10 @@
     },
     "network": {
       "title": "Hospital Network",
-      "description": "Status of registered hospitals",
-      "loading": "Loading hospital data...",
+      "description": "Estado de los hospitales registrados",
+      "loading": "Cargando datos de hospitales...",
       "headers": {
-        "name": "Name",
+        "name": "Nombre",
         "location": "Location",
         "status": "Status",
         "patientsCount": "Patients",
@@ -335,5 +341,82 @@
       "updateButton": "Update",
       "createButton": "Create"
     }
+  },
+  "donatePage": {
+    "title": "Donations & Help",
+    "bloodDonations": {
+      "title": "Blood Donations",
+      "type": "Type",
+      "allTypes": "All blood types",
+      "button": "Schedule Blood Donation",
+      "noNeeds": "No blood donation needs at this time."
+    },
+    "supplyDonations": {
+      "title": "Supply Donations",
+      "button": "Donate Supplies",
+      "noNeeds": "No supply donation needs at this time."
+    },
+    "volunteerHelp": {
+      "title": "Volunteer Help",
+      "button": "Volunteer Now",
+      "noNeeds": "No volunteer needs at this time."
+    }
+  },
+  "urgency": {
+    "critical": "Critical",
+    "high": "High",
+    "normal": "Normal"
+  },
+  "searchPage": {
+    "title": "Search",
+    "inputPlaceholder": "Enter patient name",
+    "buttonText": "Search",
+    "resultsTitle": "Search Results",
+    "noResults": {
+      "message": "No results found for \"{{searchQuery}}\"",
+      "suggestion": "Try a different search term."
+    },
+    "default": {
+      "message": "Enter a name to search for patients.",
+      "suggestion": "Start typing to see results."
+    }
+  },
+  "mapPage": {
+    "title": "Map",
+    "eventActive": {
+      "title": "Active Event"
+    },
+    "placeholder": {
+      "text": "Map data is currently unavailable.",
+      "button": "Refresh Map"
+    },
+    "viewMap": "View full-screen map"
+  },
+  "hospitalDetailsPage": {
+    "backLink": "Back to Hospitals",
+    "notFound": {
+      "message": "Hospital not found.",
+      "link": "View all hospitals"
+    },
+    "tabs": {
+      "patients": "Patients",
+      "donationNeeds": "Donation Needs"
+    },
+    "patients": {
+      "title": "Patients",
+      "updatedTime": "Last updated: 5 minutes ago",
+      "admitted": "Admitted",
+      "noRecords": "No patient records found."
+    },
+    "donationNeeds": {
+      "title": "Donation Needs",
+      "priority": "priority",
+      "button": "Make a Donation",
+      "noNeeds": "No donation needs at this time."
+    }
+  },
+  "hospitalsPage": {
+    "title": "Hospitals",
+    "noHospitals": "No hospitals found."
   }
 }
