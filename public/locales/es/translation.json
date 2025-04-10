@@ -205,11 +205,24 @@
         "services": "Servicios",
         "specialties": "Especialidades"
       },
+      "fields": {
+        "name": "Nombre del Hospital",
+        "address": "Dirección",
+        "latitude": "Latitud",
+        "longitude": "Longitud",
+        "capacity": "Capacidad",
+        "currentOccupancy": "Ocupación Actual",
+        "phone": "Teléfono",
+        "email": "Correo Electrónico"
+      },
       "buttons": {
         "cancel": "Cancelar",
         "update": "Actualizar",
         "create": "Crear"
-      }
+      },
+      "cancelButton": "Cancelar",
+      "updateButton": "Actualizar",
+      "createButton": "Crear"
     },
     "sections": {
       "generalInfo": "Información General",
@@ -218,11 +231,9 @@
     },
     "dialog": {
       "title": "Confirmar Eliminación",
-      "confirmText": "¿Está seguro que desea eliminar {{hospitalName}}? Esta acción no se puede deshacer.",
-      "buttons": {
-        "cancel": "Cancelar",
-        "delete": "Eliminar"
-      }
+      "description": "¿Está seguro que desea eliminar {{hospitalName}}? Esta acción no se puede deshacer.",
+      "cancelButton": "Cancelar",
+      "deleteButton": "Eliminar"
     },
     "toasts": {
       "deleted": {
@@ -244,6 +255,10 @@
       "saveError": {
         "title": "Error",
         "description": "No se pudo guardar el hospital. Por favor revise sus datos e intente de nuevo."
+      },
+      "updateSuccess": {
+        "title": "Información del Hospital Actualizada",
+        "description": "Los detalles del hospital se han actualizado exitosamente."
       }
     }
   },

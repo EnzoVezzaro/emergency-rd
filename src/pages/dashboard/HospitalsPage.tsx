@@ -86,14 +86,14 @@ const HospitalsPage = () => {
       if (selectedHospital) {
         await updateHospital(selectedHospital.id, formData);
         toast({
-          title: t('hospitalsPage.toast.updateSuccess.title'),
-          description: t('hospitalsPage.toast.updateSuccess.description'),
+          title: t('hospitalsPage.toasts.updateSuccess.title'),
+          description: t('hospitalsPage.toasts.updateSuccess.description'),
         });
       } else {
         await createHospital(formData);
         toast({
-          title: t('hospitalsPage.toast.createSuccess.title'),
-          description: t('hospitalsPage.toast.createSuccess.description'),
+          title: t('hospitalsPage.toasts.createSuccess.title'),
+          description: t('hospitalsPage.toasts.createSuccess.description'),
         });
       }
       setIsSheetOpen(false);
@@ -102,8 +102,8 @@ const HospitalsPage = () => {
     } catch (error) {
       console.error("Failed to save hospital:", error);
       toast({
-        title: t('hospitalsPage.toast.error.title'),
-        description: t('hospitalsPage.toast.error.description'),
+        title: t('hospitalsPage.toasts.error.title'),
+        description: t('hospitalsPage.toasts.error.description'),
         variant: "destructive"
       });
     }

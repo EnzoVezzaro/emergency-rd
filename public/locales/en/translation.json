@@ -197,7 +197,7 @@
     "sheet": {
       "editTitle": "Edit Hospital",
       "addTitle": "Add New Hospital",
-      "labels": {
+      "fields": {
         "name": "Hospital Name",
         "address": "Address",
         "latitude": "Latitude",
@@ -207,19 +207,15 @@
         "phone": "Phone",
         "email": "Email"
       },
-      "buttons": {
-        "cancel": "Cancel",
-        "update": "Update",
-        "create": "Create"
-      }
+      "cancelButton": "Cancel",
+      "updateButton": "Update",
+      "createButton": "Create"
     },
     "dialog": {
       "title": "Confirm Deletion",
-      "confirmText": "Are you sure you want to delete {{hospitalName}}? This action cannot be undone.",
-      "buttons": {
-        "cancel": "Cancel",
-        "delete": "Delete"
-      }
+      "description": "Are you sure you want to delete {{hospitalName}}? This action cannot be undone.",
+      "cancelButton": "Cancel",
+      "deleteButton": "Delete"
     },
     "toasts": {
       "deleted": {
@@ -241,6 +237,10 @@
       "saveError": {
         "title": "Error",
         "description": "Failed to save the hospital. Please check your inputs and try again."
+      },
+      "updateSuccess": {
+        "title": "Hospital Information Updated",
+        "description": "The hospital details have been successfully updated."
       }
     }
   },
