@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/context/AppContext";
+import { I18nProvider } from "@/context/I18nContext"; // Import I18nProvider
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -96,9 +97,10 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
     <AppProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+      <I18nProvider> {/* Wrap with I18nProvider */}
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
         <BrowserRouter>
           <Routes>
             {/* Landing page route */}
@@ -151,6 +153,7 @@ const App = () => {
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
+    </I18nProvider> {/* Close I18nProvider */}
     </AppProvider>
   </QueryClientProvider>
   );

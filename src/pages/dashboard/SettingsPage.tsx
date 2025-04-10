@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/components/ui/use-toast';
+import { useI18n } from '@/context/I18nContext'; // Import the i18n hook
 
 // Define a key for localStorage
 const SETTINGS_STORAGE_KEY = 'appSettings';
@@ -16,46 +17,54 @@ interface AppSettings {
   aiProvider: string;
   aiModel: string;
   apiKey: string;
-  language: string;
+  // language: string; // Removed: Managed by I18nContext
   theme: string;
 }
 
 const SettingsPage = () => {
   const { toast } = useToast();
+  const { t, language: currentLanguage, setLanguage } = useI18n(); // Use the i18n hook
 
   // --- State for Settings with initial defaults ---
-  const [settings, setSettings] = useState<AppSettings>({
+  // State now primarily reflects the UI interaction, actual language is managed by I18nContext
+  const [settings, setSettings] = useState<Omit<AppSettings, 'language'>>({
     aiProvider: 'Google',
     aiModel: '',
     apiKey: '',
-    language: 'es',
+    // language: 'es', // Removed: Use currentLanguage from context
     theme: 'light',
   });
 
-  // --- Load settings from localStorage on component mount ---
+  // --- Load settings from localStorage on component mount (excluding language) ---
   useEffect(() => {
     const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
     if (storedSettings) {
       try {
         const parsedSettings = JSON.parse(storedSettings);
-        // Merge stored settings with defaults to handle missing keys
-        setSettings(prev => ({ ...prev, ...parsedSettings }));
-        console.log('Loaded settings from localStorage:', parsedSettings);
+        // Load all settings EXCEPT language, which is handled by I18nProvider
+        const { language, ...otherSettings } = parsedSettings;
+        setSettings(prev => ({ ...prev, ...otherSettings }));
+        console.log('Loaded non-language settings from localStorage:', otherSettings);
+        // Apply theme if loaded
+        if (parsedSettings.theme) {
+           applyTheme(parsedSettings.theme);
+        }
       } catch (error) {
         console.error("Failed to parse settings from localStorage:", error);
-        // Optionally clear corrupted storage
-        // localStorage.removeItem(SETTINGS_STORAGE_KEY);
       }
     }
-  }, []); // Empty dependency array ensures this runs only once on mount
+    // No need to sync language select here anymore, it uses currentLanguage directly
+  }, []); // Run only once on mount
 
-  // --- Handle input changes ---
-  const handleInputChange = (field: keyof AppSettings, value: string) => {
+
+  // --- Handle input changes (excluding language) ---
+  const handleInputChange = (field: Exclude<keyof AppSettings, 'language'>, value: string) => {
+    // Update local component state for UI feedback
     setSettings(prev => ({ ...prev, [field]: value }));
 
     // --- Apply theme change immediately ---
     if (field === 'theme') {
-      applyTheme(value);
+      applyTheme(value); // Apply theme class change
     }
   };
 
@@ -78,15 +87,16 @@ const SettingsPage = () => {
       // console.log('Saving settings:', { ...settingsToSave, apiKey: '***' });
 
       localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settingsToSave));
+      // Language changes are handled immediately via the Select component
       toast({
-        title: "Settings Saved",
-        description: "Your settings have been saved to local storage.",
+        title: t('settingsSaved'), // Use translation key
+        description: t('settingsSavedDescription'), // Use translation key
       });
     } catch (error) {
       console.error("Failed to save settings to localStorage:", error);
       toast({
-        title: "Error Saving Settings",
-        description: "Could not save settings to local storage.",
+        title: t('errorSavingSettings'), // Use translation key
+        description: t('errorSavingSettingsDescription'), // Use translation key
         variant: "destructive",
       });
     }
@@ -94,25 +104,25 @@ const SettingsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6 max-w-4xl mx-auto"> {/* Added max-width and centering */}
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+      <div className="p-6 space-y-6 max-w-4xl mx-auto">
+        <h1 className="text-3xl font-bold tracking-tight">{t('settings')}</h1>
 
         <form onSubmit={handleSaveSettings} className="space-y-6">
           {/* AI Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle>AI Configuration</CardTitle>
-              <CardDescription>Configure the AI provider for OCR and other tasks.</CardDescription>
+              <CardTitle>{t('aiConfig')}</CardTitle>
+              <CardDescription>{t('aiConfigDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <Label htmlFor="ai-provider" className="md:text-right">Provider</Label>
+                <Label htmlFor="ai-provider" className="md:text-right">{t('provider')}</Label>
                 <Select
                   value={settings.aiProvider}
                   onValueChange={(value) => handleInputChange('aiProvider', value)}
                 >
                   <SelectTrigger id="ai-provider" className="col-span-2">
-                    <SelectValue placeholder="Select AI Provider" />
+                    <SelectValue placeholder={t('selectProvider')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Google">Google</SelectItem>
@@ -124,26 +134,26 @@ const SettingsPage = () => {
                 </Select>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <Label htmlFor="ai-model" className="md:text-right">Model</Label>
+                <Label htmlFor="ai-model" className="md:text-right">{t('model')}</Label>
                 <Input
                   id="ai-model"
                   value={settings.aiModel}
                   onChange={(e) => handleInputChange('aiModel', e.target.value)}
-                  placeholder="e.g., gemini-pro-vision, gpt-4o"
+                  placeholder={t('modelPlaceholder')}
                   className="col-span-2"
                 />
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <Label htmlFor="api-key" className="md:text-right">API Key</Label>
+                <Label htmlFor="api-key" className="md:text-right">{t('apiKey')}</Label>
                 <Input
                   id="api-key"
                   type="password" // Use password type for masking
                   value={settings.apiKey}
                   onChange={(e) => handleInputChange('apiKey', e.target.value)}
-                  placeholder="Enter your API Key (stored locally)"
+                  placeholder={t('apiKeyPlaceholder')}
                   className="col-span-2"
                 />
-                 <p className="text-xs text-muted-foreground col-span-2 md:col-start-2">Note: API keys are stored in your browser's local storage. Do not use production keys.</p>
+                 <p className="text-xs text-muted-foreground col-span-2 md:col-start-2">{t('apiKeyNote')}</p>
               </div>
             </CardContent>
           </Card>
@@ -151,22 +161,22 @@ const SettingsPage = () => {
           {/* Language Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Language & Region</CardTitle>
-              <CardDescription>Set the default language for the application.</CardDescription>
+              <CardTitle>{t('languageRegion')}</CardTitle>
+              <CardDescription>{t('languageRegionDescription')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                <Label htmlFor="language" className="md:text-right">Language</Label>
+                <Label htmlFor="language" className="md:text-right">{t('language')}</Label>
                 <Select
-                  value={settings.language}
-                  onValueChange={(value) => handleInputChange('language', value)}
+                  value={currentLanguage} // Use current language from context directly
+                  onValueChange={(value) => setLanguage(value)} // Call context setter directly
                 >
                   <SelectTrigger id="language" className="col-span-2">
-                    <SelectValue placeholder="Select Language" />
+                    <SelectValue placeholder={t('selectLanguage')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="es">Español (Spanish)</SelectItem>
-                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="es">{t('spanish')}</SelectItem>
+                    <SelectItem value="en">{t('english')}</SelectItem>
                     {/* Add other languages as needed */}
                   </SelectContent>
                 </Select>
@@ -177,8 +187,8 @@ const SettingsPage = () => {
           {/* Theme Settings Card */}
           <Card>
             <CardHeader>
-              <CardTitle>Appearance</CardTitle>
-              <CardDescription>Choose the application theme.</CardDescription>
+              <CardTitle>{t('appearance')}</CardTitle>
+              <CardDescription>{t('appearanceDescription')}</CardDescription>
             </CardHeader>
             <CardContent>
               <RadioGroup
@@ -188,19 +198,19 @@ const SettingsPage = () => {
               >
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="light" id="theme-light" />
-                  <Label htmlFor="theme-light">Light</Label>
+                  <Label htmlFor="theme-light">{t('light')}</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem value="dark" id="theme-dark" />
-                  <Label htmlFor="theme-dark">Dark</Label>
+                  <Label htmlFor="theme-dark">{t('dark')}</Label>
                 </div>
               </RadioGroup>
             </CardContent>
           </Card>
 
           {/* Save Button */}
-          <div className="flex justify-end pt-4"> {/* Added padding top */}
-            <Button type="submit">Save Settings</Button>
+          <div className="flex justify-end pt-4">
+            <Button type="submit">{t('saveSettings')}</Button>
           </div>
         </form>
       </div>
