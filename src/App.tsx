@@ -27,6 +27,7 @@ import UploadPage from "./pages/dashboard/UploadPage";
 import DashboardHospitalsPage from "./pages/dashboard/HospitalsPage";
 import EventsPage from "./pages/dashboard/EventsPage";
 import PatientsPage from "./pages/dashboard/PatientsPage";
+import SettingsPage from "./pages/dashboard/SettingsPage"; // Import the new Settings page
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -109,6 +110,11 @@ const App = () => {
             <Route path="/dashboard/patients" element={
               <ProtectedRoute>
                 <PatientsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/settings" element={ // Add the new route for settings
+              <ProtectedRoute>
+                <SettingsPage />
               </ProtectedRoute>
             } />
             
