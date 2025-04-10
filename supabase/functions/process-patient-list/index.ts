@@ -145,7 +145,7 @@ serve(async (req) => {
           mimeType,
           promptLength: prompt.length,
           base64DataLength: base64Data.length,
-          model: "gemini-pro-vision" // Use the standard vision model unless specifically needing experimental features
+          model: "gemini-2.0-flash-exp-image-generation" // Use the standard vision model unless specifically needing experimental features
       });
 
        // Update upload status to processing BEFORE calling GenAI
@@ -163,7 +163,7 @@ serve(async (req) => {
 
       // --- GenAI Call ---
       const result = await genai.models.generateContent({
-          model: "gemini-2.0-flash",
+          model: "gemini-2.0-flash-exp-image-generation",
           config: {
             responseModalities: ["Text", "Image"],
           },
@@ -179,6 +179,7 @@ serve(async (req) => {
         });
 
       let response;
+      console.log(`Received GenAI response:`, response);
       if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts) {
         for (const part of result.candidates[0].content.parts) {
           // This must be a json based on the prompt above
