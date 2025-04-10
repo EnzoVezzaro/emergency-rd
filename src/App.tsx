@@ -3,8 +3,13 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "@/context/AppContext";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+
+// Auth components
+import { LoginPage } from "./pages/LoginPage";
 
 // Home/Index Page
 import Index from "./pages/Index";
@@ -26,8 +31,41 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
+const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const [loading, setLoading] = useState(true);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setAuthenticated(!!session);
+      setLoading(false);
+    };
+
+    checkAuth();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  return authenticated ? children : <Navigate to="/login" replace />;
+};
+
+const App = () => {
+  const [session, setSession] = useState(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
     <AppProvider>
       <TooltipProvider>
         <Toaster />
@@ -44,12 +82,35 @@ const App = () => (
             <Route path="/search" element={<SearchPage />} />
             <Route path="/donate" element={<DonatePage />} />
             
-            {/* Dashboard routes */}
-            <Route path="/dashboard" element={<DashboardHomePage />} />
-            <Route path="/dashboard/upload" element={<UploadPage />} />
-            <Route path="/dashboard/hospitals" element={<DashboardHospitalsPage />} />
-            <Route path="/dashboard/events" element={<EventsPage />} />
-            <Route path="/dashboard/patients" element={<PatientsPage />} />
+            {/* Login route */}
+            <Route path="/login" element={<LoginPage />} />
+            
+            {/* Dashboard routes - protected */}
+            <Route path="/dashboard" element={
+              <ProtectedRoute>
+                <DashboardHomePage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/upload" element={
+              <ProtectedRoute>
+                <UploadPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/hospitals" element={
+              <ProtectedRoute>
+                <DashboardHospitalsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/events" element={
+              <ProtectedRoute>
+                <EventsPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/dashboard/patients" element={
+              <ProtectedRoute>
+                <PatientsPage />
+              </ProtectedRoute>
+            } />
             
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
@@ -58,6 +119,7 @@ const App = () => (
       </TooltipProvider>
     </AppProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
