@@ -1,5 +1,5 @@
-
 import { useState } from 'react';
+import { useI18n } from '@/context/I18nContext';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 
 const PatientsPage = () => {
+  const { t } = useI18n();
   const { patients, hospitals, events, isLoading, refreshData } = useAppContext();
   const { toast } = useToast();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -64,14 +65,14 @@ const PatientsPage = () => {
       
       await refreshData();
       toast({
-        title: "Patient deleted",
-        description: "The patient record has been successfully removed.",
+        title: t('patientsPage.toast.deleteSuccess.title'),
+        description: t('patientsPage.toast.deleteSuccess.description'),
       });
     } catch (error) {
       console.error("Failed to delete patient:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete the patient record. Please try again.",
+        title: t('patientsPage.toast.deleteError.title'),
+        description: t('patientsPage.toast.deleteError.description'),
         variant: "destructive"
       });
     }
@@ -95,8 +96,8 @@ const PatientsPage = () => {
         if (error) throw error;
         
         toast({
-          title: "Patient updated",
-          description: "The patient information has been updated successfully.",
+          title: t('patientsPage.toast.updateSuccess.title'),
+          description: t('patientsPage.toast.updateSuccess.description'),
         });
       } else {
         const { error } = await supabase
@@ -111,8 +112,8 @@ const PatientsPage = () => {
         if (error) throw error;
         
         toast({
-          title: "Patient added",
-          description: "The new patient has been added successfully.",
+          title: t('patientsPage.toast.addSuccess.title'),
+          description: t('patientsPage.toast.addSuccess.description'),
         });
       }
       setIsSheetOpen(false);
@@ -121,8 +122,8 @@ const PatientsPage = () => {
     } catch (error) {
       console.error("Failed to save patient:", error);
       toast({
-        title: "Error",
-        description: "Failed to save the patient. Please check your inputs and try again.",
+        title: t('patientsPage.toast.saveError.title'),
+        description: t('patientsPage.toast.saveError.description'),
         variant: "destructive"
       });
     }
@@ -143,24 +144,24 @@ const PatientsPage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Patients</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('patientsPage.title')}</h1>
           <Button onClick={() => {
             setSelectedPatient(null);
             resetForm();
             setIsSheetOpen(true);
           }}>
-            <Plus className="mr-2 h-4 w-4" /> Add Patient
+            <Plus className="mr-2 h-4 w-4" /> {t('patientsPage.addPatientButton')}
           </Button>
         </div>
         <p className="text-muted-foreground">
-          Manage patient information and track status.
+          {t('patientsPage.description')}
         </p>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Total Patients</CardTitle>
-              <CardDescription>Registered in the system</CardDescription>
+              <CardTitle>{t('patientsPage.stats.total')}</CardTitle>
+              <CardDescription>{t('patientsPage.stats.totalDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{totalPatients}</p>
@@ -169,8 +170,8 @@ const PatientsPage = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>Hospitalized</CardTitle>
-              <CardDescription>Currently in hospital care</CardDescription>
+              <CardTitle>{t('patientsPage.stats.hospitalized')}</CardTitle>
+              <CardDescription>{t('patientsPage.stats.hospitalizedDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{hospitalizedPatients}</p>
@@ -179,8 +180,8 @@ const PatientsPage = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>Critical</CardTitle>
-              <CardDescription>In critical condition</CardDescription>
+              <CardTitle>{t('patientsPage.stats.critical')}</CardTitle>
+              <CardDescription>{t('patientsPage.stats.criticalDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{criticalPatients}</p>
@@ -190,24 +191,24 @@ const PatientsPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Patient Records</CardTitle>
-            <CardDescription>Manage patient information</CardDescription>
+            <CardTitle>{t('patientsPage.list.title')}</CardTitle>
+            <CardDescription>{t('patientsPage.list.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex items-center justify-center p-4">
-                <p>Loading patient data...</p>
+                <p>{t('patientsPage.list.loading')}</p>
               </div>
             ) : (
               <>
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Hospital</TableHead>
-                      <TableHead>Condition</TableHead>
-                      <TableHead>Admitted</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>{t('patientsPage.list.headers.name')}</TableHead>
+                      <TableHead>{t('patientsPage.list.headers.hospital')}</TableHead>
+                      <TableHead>{t('patientsPage.list.headers.condition')}</TableHead>
+                      <TableHead>{t('patientsPage.list.headers.admitted')}</TableHead>
+                      <TableHead className="text-right">{t('patientsPage.list.headers.actions')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -216,14 +217,14 @@ const PatientsPage = () => {
                       return (
                         <TableRow key={patient.id}>
                           <TableCell className="font-medium">{patient.name}</TableCell>
-                          <TableCell>{hospital?.name || 'Not assigned'}</TableCell>
+                          <TableCell>{hospital?.name || t('patientsPage.list.headers.notAssigned')}</TableCell>
                           <TableCell>
                             <span className={`inline-block px-2 py-1 rounded-full text-xs ${
                               patient.condition === 'critical' ? 'bg-red-100 text-red-800' : 
                               patient.condition === 'stable' ? 'bg-green-100 text-green-800' : 
                               'bg-gray-100 text-gray-800'
                             }`}>
-                              {patient.condition || 'Unknown'}
+                              {t(`patientsPage.list.status.${patient.condition || 'unknown'}`)}
                             </span>
                           </TableCell>
                           <TableCell>{format(new Date(patient.dateAdmitted), 'MMM d, yyyy')}</TableCell>
@@ -309,11 +310,11 @@ const PatientsPage = () => {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent className="sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>{selectedPatient ? "Edit Patient" : "Add New Patient"}</SheetTitle>
+            <SheetTitle>{selectedPatient ? t('patientsPage.sheet.editTitle') : t('patientsPage.sheet.addTitle')}</SheetTitle>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="full_name">Full Name</Label>
+              <Label htmlFor="full_name">{t('patientsPage.sheet.fields.fullName')}</Label>
               <Input 
                 id="full_name" 
                 value={formData.full_name} 
@@ -323,7 +324,7 @@ const PatientsPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="status">Condition</Label>
+              <Label htmlFor="status">{t('patientsPage.sheet.fields.condition')}</Label>
               <select 
                 id="status"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -331,21 +332,21 @@ const PatientsPage = () => {
                 onChange={(e) => setFormData({...formData, status: e.target.value})}
                 required
               >
-                <option value="stable">Stable</option>
-                <option value="critical">Critical</option>
-                <option value="unknown">Unknown</option>
+                <option value="stable">{t('patientsPage.sheet.fields.conditionOptions.stable')}</option>
+                <option value="critical">{t('patientsPage.sheet.fields.conditionOptions.critical')}</option>
+                <option value="unknown">{t('patientsPage.sheet.fields.conditionOptions.unknown')}</option>
               </select>
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="hospital_id">Hospital</Label>
+              <Label htmlFor="hospital_id">{t('patientsPage.sheet.fields.hospital')}</Label>
               <select 
                 id="hospital_id"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 value={formData.hospital_id}
                 onChange={(e) => setFormData({...formData, hospital_id: e.target.value})}
               >
-                <option value="">Not assigned</option>
+                <option value="">{t('patientsPage.sheet.fields.hospitalOptions.notAssigned')}</option>
                 {hospitals.map((hospital) => (
                   <option key={hospital.id} value={hospital.id}>{hospital.name}</option>
                 ))}
@@ -353,14 +354,14 @@ const PatientsPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="event_id">Event</Label>
+              <Label htmlFor="event_id">{t('patientsPage.sheet.fields.event')}</Label>
               <select 
                 id="event_id"
                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                 value={formData.event_id}
                 onChange={(e) => setFormData({...formData, event_id: e.target.value})}
               >
-                <option value="">Not associated</option>
+                <option value="">{t('patientsPage.sheet.fields.eventOptions.notAssociated')}</option>
                 {events.map((event) => (
                   <option key={event.id} value={event.id}>{event.name}</option>
                 ))}
@@ -369,10 +370,10 @@ const PatientsPage = () => {
             
             <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setIsSheetOpen(false)}>
-                Cancel
+                {t('patientsPage.sheet.cancelButton')}
               </Button>
               <Button type="submit">
-                {selectedPatient ? "Update" : "Create"}
+                {selectedPatient ? t('patientsPage.sheet.updateButton') : t('patientsPage.sheet.createButton')}
               </Button>
             </div>
           </form>
@@ -383,18 +384,18 @@ const PatientsPage = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>{t('patientsPage.dialog.title')}</DialogTitle>
           </DialogHeader>
-          <p>Are you sure you want to delete {selectedPatient?.name}'s record? This action cannot be undone.</p>
+          <p>{t('patientsPage.dialog.description', { name: selectedPatient?.name })}</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t('patientsPage.dialog.cancelButton')}
             </Button>
             <Button 
               variant="destructive" 
               onClick={() => selectedPatient && handleDelete(selectedPatient.id)}
             >
-              Delete
+              {t('patientsPage.dialog.deleteButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

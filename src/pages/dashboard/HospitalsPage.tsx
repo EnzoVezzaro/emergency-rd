@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import { useAppContext } from '@/context/AppContext';
@@ -12,10 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 import { createHospital, updateHospital, deleteHospital, DbHospital } from '@/services/supabaseService';
+import { useI18n } from '@/context/I18nContext';
 
 const HospitalsPage = () => {
   const { hospitals, isLoading, refreshData } = useAppContext();
   const { toast } = useToast();
+  const { t } = useI18n();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState<DbHospital | null>(null);
@@ -65,14 +66,14 @@ const HospitalsPage = () => {
       await deleteHospital(id);
       await refreshData();
       toast({
-        title: "Hospital deleted",
-        description: "The hospital has been successfully removed.",
+        title: t('hospitalsPage.toast.deleteSuccess.title'),
+        description: t('hospitalsPage.toast.deleteSuccess.description'),
       });
     } catch (error) {
       console.error("Failed to delete hospital:", error);
       toast({
-        title: "Error",
-        description: "Failed to delete the hospital. Please try again.",
+        title: t('hospitalsPage.toast.error.title'),
+        description: t('hospitalsPage.toast.error.description'),
         variant: "destructive"
       });
     }
@@ -85,14 +86,14 @@ const HospitalsPage = () => {
       if (selectedHospital) {
         await updateHospital(selectedHospital.id, formData);
         toast({
-          title: "Hospital updated",
-          description: "The hospital information has been updated successfully.",
+          title: t('hospitalsPage.toast.updateSuccess.title'),
+          description: t('hospitalsPage.toast.updateSuccess.description'),
         });
       } else {
         await createHospital(formData);
         toast({
-          title: "Hospital created",
-          description: "The new hospital has been added successfully.",
+          title: t('hospitalsPage.toast.createSuccess.title'),
+          description: t('hospitalsPage.toast.createSuccess.description'),
         });
       }
       setIsSheetOpen(false);
@@ -101,8 +102,8 @@ const HospitalsPage = () => {
     } catch (error) {
       console.error("Failed to save hospital:", error);
       toast({
-        title: "Error",
-        description: "Failed to save the hospital. Please check your inputs and try again.",
+        title: t('hospitalsPage.toast.error.title'),
+        description: t('hospitalsPage.toast.error.description'),
         variant: "destructive"
       });
     }
@@ -120,44 +121,42 @@ const HospitalsPage = () => {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">Hospitals</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('hospitalsPage.title')}</h1>
           <Button onClick={() => {
             setSelectedHospital(null);
             resetForm();
             setIsSheetOpen(true);
           }}>
-            <Plus className="mr-2 h-4 w-4" /> Add Hospital
+            <Plus className="mr-2 h-4 w-4" /> {t('hospitalsPage.addHospitalButton')}
           </Button>
         </div>
         <p className="text-muted-foreground">
-          Manage hospitals and their status information.
+          {t('hospitalsPage.description')}
         </p>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Total Hospitals</CardTitle>
-              <CardDescription>Registered in the system</CardDescription>
+              <CardTitle>{t('hospitalsPage.stats.total')}</CardTitle>
+              <CardDescription>{t('hospitalsPage.stats.totalDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{hospitals.length}</p>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader>
-              <CardTitle>At Capacity</CardTitle>
-              <CardDescription>Hospitals at or near capacity</CardDescription>
+              <CardTitle>{t('hospitalsPage.stats.atCapacity')}</CardTitle>
+              <CardDescription>{t('hospitalsPage.stats.atCapacityDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{atCapacityCount}</p>
             </CardContent>
           </Card>
-          
           <Card>
             <CardHeader>
-              <CardTitle>Available Beds</CardTitle>
-              <CardDescription>Total available across network</CardDescription>
+              <CardTitle>{t('hospitalsPage.stats.availableBeds')}</CardTitle>
+              <CardDescription>{t('hospitalsPage.stats.availableBedsDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               <p className="text-2xl font-bold">{availableBedCount}</p>
@@ -167,22 +166,22 @@ const HospitalsPage = () => {
 
         <Card>
           <CardHeader>
-            <CardTitle>Hospital Network</CardTitle>
-            <CardDescription>Status of registered hospitals</CardDescription>
+            <CardTitle>{t('hospitalsPage.network.title')}</CardTitle>
+            <CardDescription>{t('hospitalsPage.network.description')}</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoading ? (
               <div className="flex items-center justify-center p-4">
-                <p>Loading hospital data...</p>
+                <p>{t('hospitalsPage.network.loading')}</p>
               </div>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead className="text-center">Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('hospitalsPage.network.headers.name')}</TableHead>
+                    <TableHead>{t('hospitalsPage.network.headers.location')}</TableHead>
+                    <TableHead className="text-center">{t('hospitalsPage.network.headers.status')}</TableHead>
+                    <TableHead className="text-right">{t('hospitalsPage.network.headers.actions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -199,8 +198,7 @@ const HospitalsPage = () => {
                             }`}
                           />
                           <span>
-                            {hospital.status === 'full' ? 'At capacity' : 
-                             hospital.status === 'receiving' ? 'Normal capacity' : 'Closed'}
+                            {t(`hospitalsPage.network.status.${hospital.status}`)}
                           </span>
                         </div>
                       </TableCell>
@@ -234,11 +232,11 @@ const HospitalsPage = () => {
       <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
         <SheetContent className="sm:max-w-md">
           <SheetHeader>
-            <SheetTitle>{selectedHospital ? "Edit Hospital" : "Add New Hospital"}</SheetTitle>
+            <SheetTitle>{selectedHospital ? t('hospitalsPage.sheet.editTitle') : t('hospitalsPage.sheet.addTitle')}</SheetTitle>
           </SheetHeader>
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Hospital Name</Label>
+              <Label htmlFor="name">{t('hospitalsPage.sheet.fields.name')}</Label>
               <Input 
                 id="name" 
                 value={formData.name} 
@@ -248,7 +246,7 @@ const HospitalsPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="address">Address</Label>
+              <Label htmlFor="address">{t('hospitalsPage.sheet.fields.address')}</Label>
               <Input 
                 id="address" 
                 value={formData.address} 
@@ -259,7 +257,7 @@ const HospitalsPage = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="latitude">Latitude</Label>
+                <Label htmlFor="latitude">{t('hospitalsPage.sheet.fields.latitude')}</Label>
                 <Input 
                   id="latitude" 
                   type="number" 
@@ -270,7 +268,7 @@ const HospitalsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="longitude">Longitude</Label>
+                <Label htmlFor="longitude">{t('hospitalsPage.sheet.fields.longitude')}</Label>
                 <Input 
                   id="longitude" 
                   type="number" 
@@ -284,7 +282,7 @@ const HospitalsPage = () => {
             
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="capacity">Capacity</Label>
+                <Label htmlFor="capacity">{t('hospitalsPage.sheet.fields.capacity')}</Label>
                 <Input 
                   id="capacity" 
                   type="number" 
@@ -294,7 +292,7 @@ const HospitalsPage = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="current_occupancy">Current Occupancy</Label>
+                <Label htmlFor="current_occupancy">{t('hospitalsPage.sheet.fields.currentOccupancy')}</Label>
                 <Input 
                   id="current_occupancy" 
                   type="number" 
@@ -306,7 +304,7 @@ const HospitalsPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="contact_phone">Phone</Label>
+              <Label htmlFor="contact_phone">{t('hospitalsPage.sheet.fields.phone')}</Label>
               <Input 
                 id="contact_phone" 
                 value={formData.contact_phone || ''} 
@@ -315,7 +313,7 @@ const HospitalsPage = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="contact_email">Email</Label>
+              <Label htmlFor="contact_email">{t('hospitalsPage.sheet.fields.email')}</Label>
               <Input 
                 id="contact_email" 
                 type="email" 
@@ -326,10 +324,10 @@ const HospitalsPage = () => {
             
             <div className="flex justify-end space-x-2 pt-4">
               <Button type="button" variant="outline" onClick={() => setIsSheetOpen(false)}>
-                Cancel
+                {t('hospitalsPage.sheet.cancelButton')}
               </Button>
               <Button type="submit">
-                {selectedHospital ? "Update" : "Create"}
+                {selectedHospital ? t('hospitalsPage.sheet.updateButton') : t('hospitalsPage.sheet.createButton')}
               </Button>
             </div>
           </form>
@@ -340,18 +338,18 @@ const HospitalsPage = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogTitle>{t('hospitalsPage.dialog.title')}</DialogTitle>
           </DialogHeader>
-          <p>Are you sure you want to delete {selectedHospital?.name}? This action cannot be undone.</p>
+          <p>{t('hospitalsPage.dialog.description', { name: selectedHospital?.name })}</p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
+              {t('hospitalsPage.dialog.cancelButton')}
             </Button>
             <Button 
               variant="destructive" 
               onClick={() => selectedHospital && handleDelete(selectedHospital.id)}
             >
-              Delete
+              {t('hospitalsPage.dialog.deleteButton')}
             </Button>
           </DialogFooter>
         </DialogContent>

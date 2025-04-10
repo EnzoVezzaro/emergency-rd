@@ -288,5 +288,46 @@
       "uploadFailed": "Upload failed",
       "uploadFailedDescription": "An unknown error occurred"
     }
+  },
+  "patientsPage": {
+    "stats": {
+      "hospitalized": "Hospitalized",
+      "hospitalizedDesc": "Patients currently hospitalized",
+      "critical": "Critical",
+      "criticalDesc": "Patients in critical condition"
+    },
+    "list": {
+      "headers": {
+        "hospital": "Hospital",
+        "condition": "Condition",
+        "admitted": "Admitted"
+      },
+      "status": {
+        "stable": "Stable",
+        "critical": "Critical"
+      }
+    },
+    "sheet": {
+      "fields": {
+        "fullName": "Full Name",
+        "condition": "Condition",
+        "conditionOptions": {
+          "stable": "Stable",
+          "critical": "Critical",
+          "unknown": "Unknown"
+        },
+        "hospital": "Hospital",
+        "event": "Event",
+        "hospitalOptions": {
+          "notAssigned": "Not assigned"
+        },
+        "eventOptions": {
+          "notAssociated": "Not associated"
+        }
+      },
+      "cancelButton": "Cancel",
+      "updateButton": "Update",
+      "createButton": "Create"
+    }
   }
 }

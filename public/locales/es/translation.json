@@ -201,13 +201,20 @@
         "capacity": "Capacidad",
         "currentOccupancy": "Ocupación Actual",
         "phone": "Teléfono",
-        "email": "Correo Electrónico"
+        "email": "Correo Electrónico",
+        "services": "Servicios",
+        "specialties": "Especialidades"
       },
       "buttons": {
         "cancel": "Cancelar",
         "update": "Actualizar",
         "create": "Crear"
       }
+    },
+    "sections": {
+      "generalInfo": "Información General",
+      "contactInfo": "Información de Contacto",
+      "capacityInfo": "Información de Capacidad"
     },
     "dialog": {
       "title": "Confirmar Eliminación",
@@ -283,6 +290,111 @@
       "uploadSuccessDescription": "La lista de pacientes ha sido subida y será procesada.",
       "uploadFailed": "Error al subir",
       "uploadFailedDescription": "Ocurrió un error desconocido"
+    }
+  },
+  "patientsPage": {
+    "title": "Pacientes",
+    "description": "Gestionar información de pacientes registrados.",
+    "addPatientButton": "Añadir Paciente",
+    "stats": {
+      "total": "Pacientes Totales",
+      "totalDesc": "Registrados en el sistema",
+      "recentAdmissions": "Admisiones Recientes",
+      "recentAdmissionsDesc": "Pacientes admitidos en los últimos 7 días",
+      "discharged": "Dados de Alta",
+      "dischargedDesc": "Pacientes dados de alta recientemente",
+      "hospitalized": "Hospitalizados",
+      "hospitalizedDesc": "Pacientes actualmente hospitalizados",
+      "critical": "Críticos",
+      "criticalDesc": "Pacientes en estado crítico"
+    },
+    "list": {
+      "title": "Lista de Pacientes",
+      "description": "Información de pacientes registrados",
+      "loading": "Cargando datos de pacientes...",
+      "headers": {
+        "name": "Nombre",
+        "age": "Edad",
+        "gender": "Género",
+        "hospital": "Hospital",
+        "condition": "Condición",
+        "admitted": "Admitido",
+        "actions": "Acciones"
+      },
+      "status": {
+        "admitted": "Admitido",
+        "discharged": "Dado de Alta",
+        "transferred": "Transferido",
+        "stable": "Estable",
+        "critical": "Crítico"
+      }
+    },
+    "sheet": {
+      "editTitle": "Editar Paciente",
+      "addTitle": "Añadir Nuevo Paciente",
+      "labels": {
+        "name": "Nombre del Paciente",
+        "age": "Edad",
+        "gender": "Género",
+        "status": "Estado",
+        "hospital": "Hospital",
+        "notes": "Notas"
+      },
+      "fields": {
+        "fullName": "Nombre Completo",
+        "condition": "Condición",
+        "conditionOptions": {
+          "stable": "Estable",
+          "critical": "Crítico",
+          "unknown": "Desconocido"
+        },
+        "hospital": "Hospital",
+        "hospitalOptions": {
+          "notAssigned": "No asignado"
+        },
+        "event": "Evento",
+        "eventOptions": {
+          "notAssociated": "No asociado"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancelar",
+        "update": "Actualizar",
+        "create": "Crear"
+      },
+      "createButton": "Crear",
+      "cancelButton": "Cancelar",
+      "updateButton": "Actualizar"
+    },
+    "dialog": {
+      "title": "Confirmar Eliminación",
+      "confirmText": "¿Está seguro que desea eliminar a {{patientName}}? Esta acción no se puede deshacer.",
+      "buttons": {
+        "cancel": "Cancelar",
+        "delete": "Eliminar"
+      }
+    },
+    "toasts": {
+      "deleted": {
+        "title": "Paciente eliminado",
+        "description": "El paciente ha sido eliminado exitosamente."
+      },
+      "deleteError": {
+        "title": "Error",
+        "description": "No se pudo eliminar el paciente. Por favor intente de nuevo."
+      },
+      "updated": {
+        "title": "Paciente actualizado",
+        "description": "La información del paciente ha sido actualizada exitosamente."
+      },
+      "created": {
+        "title": "Paciente creado",
+        "description": "El nuevo paciente ha sido añadido exitosamente."
+      },
+      "saveError": {
+        "title": "Error",
+        "description": "No se pudo guardar el paciente. Por favor revise sus datos e intente de nuevo."
+      }
     }
   }
 }
