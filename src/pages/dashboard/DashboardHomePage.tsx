@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Hospital, Users, Clock, AlertCircle } from 'lucide-react';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -7,9 +7,13 @@ import { useI18n } from '@/context/I18nContext';
 
 const DashboardHomePage = () => {
   const { t } = useI18n();
-  const { hospitals, patients, events } = useAppContext(); 
+  const { hospitals, patients, events, refreshData } = useAppContext(); 
   
   const activeEvents = events.filter(event => event.status === 'active');
+
+  useEffect(()=>{
+    refreshData()
+  }, [])
 
   return (
     <DashboardLayout>
@@ -19,7 +23,7 @@ const DashboardHomePage = () => {
           <p className="text-gray-500 mt-1">
             {t('dashboardHome.description')}
           </p>
-        </div>
+        </div> 
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
