@@ -277,6 +277,7 @@
         "default": "Upload & Process",
         "uploading": "Uploading...",
         "processing": "Processing...",
+        "saving": "Saving...",
         "complete": "Processed"
       }
     },

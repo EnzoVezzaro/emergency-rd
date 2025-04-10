@@ -295,6 +295,7 @@
         "default": "Subir y Procesar",
         "uploading": "Subiendo...",
         "processing": "Procesando...",
+        "saving": "Salvando...",
         "complete": "Procesado"
       }
     },

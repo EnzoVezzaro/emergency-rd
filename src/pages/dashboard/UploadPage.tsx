@@ -48,7 +48,7 @@ const UploadPage = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadComplete, setUploadComplete] = useState(false);
-  const [processingStatus, setProcessingStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
+  const [processingStatus, setProcessingStatus] = useState<'idle' | 'processing' | 'uploading' | 'saving' | 'complete' | 'error'>('idle');
   const [uploadedFileId, setUploadedFileId] = useState<string | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
   const [extractedPatients, setExtractedPatients] = useState<z.infer<typeof PatientSchema>[]>([]);
@@ -294,6 +294,7 @@ const UploadPage = () => {
     }
     
     setIsUploading(true);
+    setProcessingStatus('uploading');
     
     try {
       // Generate unique file path
@@ -311,8 +312,9 @@ const UploadPage = () => {
       }
       
       // Create record in uploads table
+      setProcessingStatus('saving');
       const { data: uploadData, error: uploadError } = await supabase
-        .from('uploads')
+        .from('uploads') 
         .insert({
           file_path: filePath,
           file_type: selectedFile.type,
@@ -331,6 +333,7 @@ const UploadPage = () => {
         .single();
         
       if (uploadError) {
+        setProcessingStatus('error');
         throw new Error(`Upload record error: ${uploadError.message}`);
       }
 
@@ -427,21 +430,69 @@ const UploadPage = () => {
             </button>
           </div>
           
-          <div className="border rounded-md p-4">
+          <div className="border rounded-md p-4 overflow-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b">
                   <th className="text-left p-2">Name</th>
                   <th className="text-left p-2">Status</th>
-                  <th className="text-left p-2">Age</th>
+                  {extractedPatients.flatMap(p => 
+                    p.additional_info ? Object.keys(p.additional_info) : []
+                  )
+                  .filter((value, index, self) => self.indexOf(value) === index)
+                  .map(key => (
+                    <th key={key} className="text-left p-2 capitalize">{key}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {extractedPatients.map((patient, index) => (
                   <tr key={index} className="border-b">
-                    <td className="p-2">{patient.full_name}</td>
-                    <td className="p-2">{patient.status}</td>
-                    <td className="p-2">{patient.additional_info?.age || '-'}</td>
+                    <td className="p-2">
+                      <input
+                        type="text"
+                        value={patient.full_name}
+                        onChange={(e) => {
+                          const updated = [...extractedPatients];
+                          updated[index].full_name = e.target.value;
+                          setExtractedPatients(updated);
+                        }}
+                        className="w-full bg-transparent border-none focus:ring-1 focus:ring-primary"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <select
+                        value={patient.status}
+                        onChange={(e) => {
+                          const updated = [...extractedPatients];
+                          updated[index].status = e.target.value as 'stable' | 'critical' | 'unknown';
+                          setExtractedPatients(updated);
+                        }}
+                        className="bg-transparent border-none focus:ring-1 focus:ring-primary"
+                      >
+                        <option value="stable">Stable</option>
+                        <option value="critical">Critical</option>
+                        <option value="unknown">Unknown</option>
+                      </select>
+                    </td>
+                    {patient.additional_info && Object.entries(patient.additional_info).map(([key, value]) => (
+                      <td key={key} className="p-2">
+                        <input
+                          type={typeof value === 'number' ? 'number' : 'text'}
+                          value={value || ''}
+                          onChange={(e) => {
+                            const updated = [...extractedPatients];
+                            if (!updated[index].additional_info) {
+                              updated[index].additional_info = {};
+                            }
+                            updated[index].additional_info[key] = 
+                              typeof value === 'number' ? parseInt(e.target.value) : e.target.value;
+                            setExtractedPatients(updated);
+                          }}
+                          className="w-full bg-transparent border-none focus:ring-1 focus:ring-primary"
+                        />
+                      </td>
+                    ))}
                   </tr>
                 ))}
               </tbody>
@@ -593,7 +644,8 @@ const UploadPage = () => {
                   disabled={!selectedFile || isUploading || !selectedHospital || processingStatus === 'processing' || processingStatus === 'complete'}
                   className="ml-auto"
                 >
-                  {isUploading ? t('uploadPage.uploadCard.uploadButton.uploading') : 
+                  {processingStatus === 'uploading' ? t('uploadPage.uploadCard.uploadButton.uploading') : 
+                   processingStatus === 'saving' ? t('uploadPage.uploadCard.uploadButton.saving') : 
                    processingStatus === 'processing' ? t('uploadPage.uploadCard.uploadButton.processing') : 
                    processingStatus === 'complete' ? t('uploadPage.uploadCard.uploadButton.complete') : 
                    t('uploadPage.uploadCard.uploadButton.default')}
