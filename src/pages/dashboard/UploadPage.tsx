@@ -1,6 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Upload, AlertCircle, CheckCircle2, FileText, Loader2 } from 'lucide-react';
+import { Upload, AlertCircle, CheckCircle2, FileText, Loader2, X } from 'lucide-react';
+import { GoogleGenAI, GoogleGenAIOptions } from '@google/genai';
+import { z } from 'zod';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+
+const SETTINGS_STORAGE_KEY = 'appSettings';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useI18n } from '@/context/I18nContext';
 import { Button } from '@/components/ui/button';
@@ -29,6 +34,15 @@ interface ExtendedUpload {
   ocr_data: Record<string, unknown> | null;
 }
 
+// Define patient schema
+const PatientSchema = z.object({
+  full_name: z.string().min(1),
+  status: z.enum(['stable', 'critical', 'unknown']),
+  additional_info: z.object({
+    age: z.number().int().min(0).max(130).nullable().optional(),
+  }).optional(),
+});
+
 const UploadPage = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -37,12 +51,203 @@ const UploadPage = () => {
   const [processingStatus, setProcessingStatus] = useState<'idle' | 'processing' | 'complete' | 'error'>('idle');
   const [uploadedFileId, setUploadedFileId] = useState<string | null>(null);
   const [selectedHospital, setSelectedHospital] = useState<string | null>(null);
+  const [extractedPatients, setExtractedPatients] = useState<z.infer<typeof PatientSchema>[]>([]);
+  const [showDataDialog, setShowDataDialog] = useState(false);
   
   const { toast } = useToast();
   const { t } = useI18n();
   const { hospitals, currentEvent } = useAppContext();
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const [aiSettings, setAiSettings] = useState<{
+    aiProvider: string;
+    aiModel: string;
+    apiKey: string;
+  } | null>(null);
+
+  // Load AI settings from localStorage
+  useEffect(() => {
+    const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
+    if (storedSettings) {
+      try {
+        const settings = JSON.parse(storedSettings);
+        setAiSettings({
+          aiProvider: settings.aiProvider,
+          aiModel: settings.aiModel,
+          apiKey: settings.apiKey
+        });
+      } catch (error) {
+        console.error('Failed to parse AI settings:', error);
+      }
+    }
+  }, []);
+
+  const extractPatientData = async (file: File) => {
+    try {
+      const apiKey = aiSettings?.apiKey;
+      if (!apiKey) {
+        throw new Error('API key not configured in settings');
+      }
+      if (!aiSettings.aiModel) {
+        throw new Error('Missing AI provider');
+      }
+      if (aiSettings.aiProvider !== 'Google') {
+        throw new Error('Only Google provider is currently supported');
+      }
+
+      // --- File Processing & GenAI ---
+      // Define patient schema with Zod
+      const PatientSchema = z.object({
+        full_name: z.string().min(1).describe("Patient's full name"),
+        status: z.enum(['stable', 'critical', 'unknown']).describe("Patient's condition"),
+        additional_info: z.object({
+            age: z.number().int().min(0).max(130).nullable().optional().describe("Patient's age (optional)"),
+            // Allow any other additional fields
+        }).catchall(z.unknown()).optional().describe("Optional additional patient info")
+      }).describe("Schema for a single patient");
+
+      const PatientsArraySchema = z.array(PatientSchema).describe("Array of patients");
+
+
+      // Initialize Google GenAI
+      const genai = new GoogleGenAI({ apiKey });
+
+      // Process image data
+      const fileBuffer = await file.arrayBuffer();
+      const uint8Array = new Uint8Array(fileBuffer);
+
+      // Convert Uint8Array to Base64 - More robust method
+      let base64String = '';
+      const CHUNK_SIZE = 0x8000; // Process in chunks to avoid potential memory issues with large files
+      for (let i = 0; i < uint8Array.length; i += CHUNK_SIZE) {
+          base64String += String.fromCharCode.apply(null, Array.from(uint8Array.subarray(i, i + CHUNK_SIZE)));
+      }
+      const base64Data = btoa(base64String);
+
+      // Determine MIME type (assuming common image types)
+      // This basic check might need improvement based on actual file types
+      let mimeType = 'image/png'; // Default
+      const fileHeader = uint8Array.subarray(0, 4);
+      const headerString = Array.from(fileHeader).map(byte => byte.toString(16).padStart(2, '0')).join('');
+      if (headerString.startsWith('ffd8ff')) mimeType = 'image/jpeg';
+      else if (headerString.startsWith('89504e47')) mimeType = 'image/png';
+      else if (headerString.startsWith('47494638')) mimeType = 'image/gif';
+      else if (headerString.startsWith('52494646') && uint8Array.length > 11 && String.fromCharCode(...uint8Array.subarray(8, 12)) === 'WEBP') mimeType = 'image/webp';
+      // Add more checks if needed (e.g., PDF, TIFF) - GenAI supports various types
+      // else {
+      //   console.warn(`Could not determine MIME type for header: ${headerString}. Defaulting to ${mimeType}`);
+      // }
+
+      const prompt = `
+        Extract patient information precisely from the provided hospital document image.
+        Return ONLY a valid JSON array conforming to this structure:
+        [
+          {
+            "full_name": "string (patient's full name)",
+            "status": "string (must be 'stable', 'critical', or 'unknown')", // if there's nothing use 'unknown'
+            "additional_info": {
+              "age": number (integer age, or null if not found/readable),
+              ...(other info)
+            }
+          },
+          ...
+        ]
+        If no patients are found or the document is unreadable, return an empty array [].
+        Do not include any explanatory text, markdown formatting, or anything other than the JSON array itself.
+      `;
+
+      console.log(`Making GenAI request`, {
+          mimeType,
+          promptLength: prompt.length,
+          base64DataLength: base64Data.length,
+          model: aiSettings.aiModel
+      });
+
+      // --- GenAI Call ---
+      const result = await genai.models.generateContent({
+          model: aiSettings.aiModel,
+          contents: [
+            { text: prompt },
+            {
+              inlineData: {
+                mimeType: mimeType,
+                data: base64Data,
+              },
+            },
+          ]
+        });
+
+      let response;
+      console.log(`Received GenAI response:`, response);
+      if (result.candidates && result.candidates[0] && result.candidates[0].content && result.candidates[0].content.parts) {
+        for (const part of result.candidates[0].content.parts) {
+          // This must be a json based on the prompt above
+          if (part.text) {
+            // console.log(part.text);
+            response += part.text
+          }
+        }
+      }
+      const responseText = response;
+
+      let patientsData: z.infer<typeof PatientsArraySchema>;
+      try {
+        console.log('Attempting to parse GenAI response...');
+        let jsonString = responseText;
+
+        // Clean potential markdown formatting
+        const jsonMatch = responseText.match(/```(?:json)?([\s\S]*?)```/);
+        if (jsonMatch && jsonMatch[1]) {
+          jsonString = jsonMatch[1].trim();
+          console.log('Extracted JSON from markdown block.');
+        } else {
+          // Fallback: Try to find the start of the JSON array directly
+          const arrayStart = jsonString.indexOf('[');
+          const arrayEnd = jsonString.lastIndexOf(']');
+          if (arrayStart !== -1 && arrayEnd !== -1) {
+            jsonString = jsonString.substring(arrayStart, arrayEnd + 1);
+            console.log('Extracted JSON array directly.');
+          } else {
+            throw new Error("Could not find valid JSON array in the response.");
+          }
+        }
+
+        if (!jsonString) {
+             throw new Error("Extracted JSON string is empty after cleaning.");
+        }
+
+        console.log('Cleaned JSON string (first 200 chars):', jsonString.slice(0, 200));
+        const rawPatients = JSON.parse(jsonString);
+        console.log(`Parsed ${rawPatients.length} raw patient objects.`);
+
+        const validationResult = PatientsArraySchema.safeParse(rawPatients);
+
+        if (!validationResult.success) {
+          console.error(`Zod validation failed:`, validationResult.error.errors);
+          // Log the problematic raw data (truncated) for debugging
+          console.error("Raw data (truncated):", JSON.stringify(rawPatients).slice(0, 500));
+          throw new Error(`Invalid patient data structure received from AI: ${validationResult.error.message}`);
+        }
+        patientsData = validationResult.data;
+        console.log(`Successfully parsed and validated ${patientsData.length} patients`);
+
+      } catch (parseError) {
+        console.error(`Error parsing/validating GenAI response`, {
+          errorMessage: parseError instanceof Error ? parseError.message : String(parseError),
+          responseSnippet: responseText.slice(0, 500) + (responseText.length > 500 ? '...' : ''), // Log more for debugging parsing
+        });
+        // Throw a specific error for the inner catch
+        throw new Error(`Failed to parse/validate patient data from document: ${parseError instanceof Error ? parseError.message : String(parseError)}`);
+      }
+      
+      const patients = z.array(PatientSchema).parse(patientsData);
+      return patients;
+    } catch (error) {
+      console.error('Extraction error:', error);
+      throw error;
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       setSelectedFile(file);
@@ -59,8 +264,27 @@ const UploadPage = () => {
     }
   };
 
+  const handleExtraction = async () => {
+    setIsUploading(true);
+    setProcessingStatus('processing');
+    try {
+      const patients = await extractPatientData(selectedFile);
+      setExtractedPatients(patients);
+      setShowDataDialog(true);
+      setIsUploading(false);
+    } catch (error) {
+      setIsUploading(false);
+      setProcessingStatus('error');
+      toast({
+        title: 'Extraction failed',
+        description: 'Could not extract patient data from image',
+        variant: "destructive"
+      });
+    }
+  }
+
   const handleUpload = async () => {
-    if (!selectedFile || !selectedHospital || !currentEvent) {
+    if (!selectedFile || !selectedHospital || !currentEvent || !extractedPatients.length) {
       toast({
         title: t('uploadPage.errors.missingInfo'),
         description: t('uploadPage.errors.missingInfoDescription'),
@@ -94,13 +318,34 @@ const UploadPage = () => {
           file_type: selectedFile.type,
           hospital_id: selectedHospital,
           event_id: currentEvent.id,
-          processed: false,
+          processed: true,
+          ocr_status: 'completed',
+          ocr_data: { patients: extractedPatients },
+          processing_results: {
+            status: 'success',
+            extracted_count: extractedPatients.length,
+            inserted_count: extractedPatients.length,
+          }
         })
         .select()
         .single();
         
       if (uploadError) {
         throw new Error(`Upload record error: ${uploadError.message}`);
+      }
+
+      // Insert patients into victims table
+      for (const patient of extractedPatients) {
+        await supabase
+          .from('victims')
+          .insert({
+            full_name: patient.full_name,
+            status: patient.status,
+            hospital_id: selectedHospital,
+            event_id: currentEvent.id,
+            additional_info: patient.additional_info,
+            upload_id: uploadData.id
+          });
       }
       
       setUploadComplete(true);
@@ -109,25 +354,10 @@ const UploadPage = () => {
       
       toast({
         title: t('uploadPage.errors.uploadSuccess'),
-        description: t('uploadPage.errors.uploadSuccessDescription'),
+        description: `${extractedPatients.length} patient records were extracted and added to the database.`,
       });
       
-      // Start OCR processing
-      setProcessingStatus('processing');
-      console.log('here: ');
-      const { error: processError } = await supabase.functions.invoke('process-patient-list', {
-        body: { uploadId: uploadData.id }
-      });
-
-      console.log('here: 2');
-      
-      if (processError) {
-        setIsUploading(false);
-        throw new Error(`Processing error: ${processError.message}`);
-      }
-      
-      // Poll for processing status
-      pollProcessingStatus(uploadData.id);
+      setProcessingStatus('complete');
       
     } catch (error) {
       console.error('Upload error:', error);
@@ -180,8 +410,65 @@ const UploadPage = () => {
     }
   };
 
+  const handleConfirmData = () => {
+    setShowDataDialog(false);
+    handleUpload();
+  };
+
   return (
     <DashboardLayout>
+      {/* Data Preview Dialog */}
+      <Dialog open={showDataDialog} onOpenChange={setShowDataDialog}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold">Extracted Patient Data</h2>
+            <button onClick={() => setShowDataDialog(false)}>
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          
+          <div className="border rounded-md p-4">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left p-2">Name</th>
+                  <th className="text-left p-2">Status</th>
+                  <th className="text-left p-2">Age</th>
+                </tr>
+              </thead>
+              <tbody>
+                {extractedPatients.map((patient, index) => (
+                  <tr key={index} className="border-b">
+                    <td className="p-2">{patient.full_name}</td>
+                    <td className="p-2">{patient.status}</td>
+                    <td className="p-2">{patient.additional_info?.age || '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex justify-end gap-2 mt-4">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowDataDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleConfirmData}
+              disabled={isUploading}
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : 'Confirm & Upload'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <div className="space-y-6">
         <div>
           <h1 className="text-3xl font-bold">{t('uploadPage.title')}</h1>
@@ -302,7 +589,7 @@ const UploadPage = () => {
               
               <div className="flex justify-end">
                 <Button 
-                  onClick={handleUpload} 
+                  onClick={handleExtraction} 
                   disabled={!selectedFile || isUploading || !selectedHospital || processingStatus === 'processing' || processingStatus === 'complete'}
                   className="ml-auto"
                 >

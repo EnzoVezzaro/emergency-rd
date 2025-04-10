@@ -120,7 +120,7 @@ const SettingsPage = () => {
                 <Select
                   value={settings.aiProvider}
                   onValueChange={(value) => handleInputChange('aiProvider', value)}
-                >
+                > 
                   <SelectTrigger id="ai-provider" className="col-span-2">
                     <SelectValue placeholder={t('selectProvider')} />
                   </SelectTrigger>
