@@ -25,8 +25,6 @@ const SearchPage = () => {
     setHasSearched(true);
   };
 
-  console.log('patiend: ', patients, searchResults);
-
   return (
     <MobileLayout>
       <div className="p-4">

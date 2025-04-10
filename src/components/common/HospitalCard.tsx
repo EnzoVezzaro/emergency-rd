@@ -18,10 +18,12 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
         <div className="flex items-start justify-between">
           <div>
             <h3 className="font-semibold text-lg">{hospital.name}</h3>
-            <div className="flex items-center text-gray-500 text-sm mt-1">
-              <MapPin size={14} className="mr-1" />
-              <span>{hospital.city}, {hospital.state}</span>
-            </div>
+            <a href={`https://maps.google.com/maps?q=${hospital.name +', '+ hospital.address}`} target="_blank" rel="noopener noreferrer">
+              <div className="flex items-center text-gray-500 text-sm mt-1">
+                <MapPin size={14} className="mr-1" />
+                <span>{hospital.address}</span>
+              </div>
+            </a>
           </div>
           <HospitalStatusBadge status={hospital.status} />
         </div>
