@@ -167,6 +167,7 @@
   "hospitalsPage": {
     "title": "Hospitales",
     "noHospitals": "No se encontraron hospitales.",
+    "seeDetails": "Ver Detalles",
     "backLink": "Volver a Hospitales",
     "notFound": {
       "message": "Hospital no encontrado.",

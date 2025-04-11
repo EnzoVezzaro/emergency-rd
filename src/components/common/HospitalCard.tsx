@@ -6,12 +6,14 @@ import { Phone, MapPin } from 'lucide-react';
 import { Hospital } from '@/types';
 import HospitalStatusBadge from './HospitalStatusBadge';
 import DonationNeedBadge from './DonationNeedBadge';
+import { useI18n } from '@/context/I18nContext';
 
 type HospitalCardProps = {
   hospital: Hospital;
 };
 
 const HospitalCard = ({ hospital }: HospitalCardProps) => {
+  const { t } = useI18n();
   return (
     <Card className="overflow-hidden">
       <CardHeader className="p-4 bg-gray-50 border-b border-gray-100">
@@ -54,7 +56,7 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
             to={`/hospitals/${hospital.id}`}
             className="text-primary hover:text-primary-600 text-sm font-medium"
           >
-            View details
+            {t('hospitalsPage.seeDetails')}
           </Link>
         </div>
       </CardContent>

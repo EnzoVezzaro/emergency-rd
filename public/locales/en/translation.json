@@ -170,6 +170,8 @@
   },
   "hospitalsPage": {
     "title": "Hospitals",
+    "noHospitals": "No hospitals found.",
+    "seeDetails": "See Details",
     "description": "Manage hospitals and their status information.",
     "hospitalStatus": {
       "receiving": "Receiving Patients",
@@ -422,9 +424,5 @@
       "button": "Make a Donation",
       "noNeeds": "No donation needs at this time."
     }
-  },
-  "hospitalsPage": {
-    "title": "Hospitals",
-    "noHospitals": "No hospitals found."
   }
 }
