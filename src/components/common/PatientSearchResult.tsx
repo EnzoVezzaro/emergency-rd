@@ -4,8 +4,10 @@ import { Link } from 'react-router-dom';
 import { Patient } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 import { Card, CardContent } from '@/components/ui/card';
-import { Hospital, Calendar } from 'lucide-react';
+import { Hospital, Calendar, ScanEye } from 'lucide-react';
 import { useI18n } from '@/context/I18nContext';
+
+const SUPABASE_BUCKET = import.meta.env.VITE_APP_SUPABASE_BUCKET;
 
 type PatientSearchResultProps = {
   patient: Patient;
@@ -69,6 +71,10 @@ const PatientSearchResult = ({ patient }: PatientSearchResultProps) => {
           <div className="flex items-center text-sm text-gray-600">
             <Calendar size={16} className="mr-2 text-gray-500" />
             <span>{t('patientsPage.list.headers.admitted')} - {formatDate(patient.dateAdmitted)}</span>
+          </div>
+          <div className="flex items-center text-sm text-gray-600">
+            <ScanEye size={16} className="mr-2 text-gray-500" />
+            <span>{t('patientsPage.list.headers.upload')} - <a href={`${SUPABASE_BUCKET}/${patient.upload.file_path}`} target="_blank" rel="noopener noreferrer">Ver imagen</a></span>
           </div>
         </div>
       </CardContent>

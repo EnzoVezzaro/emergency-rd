@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronLeft, Phone, MapPin, Clock } from 'lucide-react';
+import { ChevronLeft, Phone, MapPin, Clock, ScanEye } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -12,6 +12,8 @@ import { useAppContext } from '@/context/AppContext';
 import { useI18n } from '@/context/I18nContext';
 import { es, enUS } from 'date-fns/locale'
 import { formatDistanceToNow } from 'date-fns';
+
+const SUPABASE_BUCKET = import.meta.env.VITE_APP_SUPABASE_BUCKET;
 
 const HospitalDetailsPage = () => {
   const { hospitalId } = useParams<{ hospitalId: string }>();
@@ -114,6 +116,10 @@ const HospitalDetailsPage = () => {
                         <p className="text-xs text-gray-500 mt-1">
                           {t('hospitalDetailsPage.patients.admitted')}: {new Date(patient.dateAdmitted).toLocaleString()}
                         </p>
+                        <div className="flex text-xs text-gray-500 mt-1">
+                          <ScanEye size={16} className="mr-2 text-gray-500" />
+                          <span>{t('patientsPage.list.headers.upload')} - <a href={`${SUPABASE_BUCKET}/${patient.upload.file_path}`} target="_blank" rel="noopener noreferrer">Ver imagen</a></span>
+                        </div>
                       </div>
                     ))}
                   </div>

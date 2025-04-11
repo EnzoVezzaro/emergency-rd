@@ -310,7 +310,12 @@
       "headers": {
         "hospital": "Hospital",
         "condition": "Condition",
-        "admitted": "Updated"
+        "admitted": "Updated",
+        "upload": "Notification",
+        "name": "Nombre",
+        "age": "Edad",
+        "gender": "Género",
+        "actions": "Acciones"
       },
       "status": {
         "stable": "Stable",

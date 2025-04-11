@@ -29,6 +29,7 @@ export type Patient = {
   condition?: 'stable' | 'critical' | 'deceased' | 'unknown';
   dateAdmitted: string;
   hospitalId: string;
+  upload: any;
   eventId: string;
 };
 

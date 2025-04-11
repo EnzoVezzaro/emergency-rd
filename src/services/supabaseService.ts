@@ -35,6 +35,7 @@ export type DbVictim = {
   hospital_id: string | null;
   event_id: string | null;
   additional_info: any | null;
+  uploads?: any;
   created_at: string | null;
   updated_at: string | null;
 };
@@ -266,7 +267,17 @@ export const getHospitalEventsMap = async (): Promise<Record<string, string[]>> 
 
 // Patient/Victim CRUD operations
 export const fetchVictims = async (): Promise<DbVictim[]> => {
-  const { data, error } = await supabase.from("victims").select("*").order("updated_at", { ascending: false });
+  const { data, error } = await supabase
+  .from("victims")
+  .select(`
+    *,
+    uploads (
+      *
+    )
+  `)
+  .order("updated_at", { ascending: false });
+
+  console.log('data: ', data);
   
   if (error) {
     console.error("Error fetching victims:", error);
@@ -283,6 +294,7 @@ export const mapDbVictimToPatient = (victim: DbVictim): Patient => {
     condition: victim.status === 'stable' || victim.status === 'critical' || victim.status === 'deceased' ? victim.status : 'unknown',
     dateAdmitted: victim.created_at || new Date().toISOString(),
     hospitalId: victim.hospital_id || "",
+    upload: victim.uploads,
     eventId: victim.event_id || ""
   };
 };
