@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,12 @@ import { useAppContext } from '@/context/AppContext';
 import { useI18n } from '@/context/I18nContext'; // Import useI18n
 
 const MapPage = () => {
-  const { currentEvent } = useAppContext();
+  const { currentEvent, refreshData } = useAppContext();
   const { t } = useI18n(); // Initialize useI18n
 
-  console.log('currentEvent: ', currentEvent); 
+  useEffect(()=>{
+    refreshData()
+  }, [])
 
   return (
     <MobileLayout>

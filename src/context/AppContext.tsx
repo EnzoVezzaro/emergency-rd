@@ -49,7 +49,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       .filter(need => need.hospital_id === hospitalId)
       .map(need => ({
         id: need.id,
-        type: (need.blood_type ? 'blood' : 'supplies') as 'blood' | 'supplies' | 'volunteers',
+        type: need.type,
         bloodType: need.blood_type as 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-' | undefined,
         description: need.additional_info || "",
         urgency: need.urgency_level as 'low' | 'medium' | 'high' | 'critical'

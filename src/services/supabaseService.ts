@@ -58,6 +58,7 @@ export type DbDonationNeed = {
   hospital_id: string | null;
   blood_type: string | null;
   urgency_level: string;
+  type: string;
   status: string;
   quantity_needed: number | null;
   additional_info: string | null;

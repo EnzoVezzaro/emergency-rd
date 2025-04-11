@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MobileLayout from '@/components/layout/MobileLayout';
 import EventSelector from '@/components/common/EventSelector';
 import HospitalCard from '@/components/common/HospitalCard';
@@ -7,7 +7,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useI18n } from '@/context/I18nContext'; // Import useI18n
 
 const HospitalsPage = () => {
-  const { hospitals, currentEvent } = useAppContext();
+  const { hospitals, currentEvent, refreshData } = useAppContext();
   const { t } = useI18n(); // Initialize useI18n
   
   const filteredHospitals = currentEvent
@@ -15,6 +15,10 @@ const HospitalsPage = () => {
         currentEvent.affectedHospitalIds.includes(hospital.id)
       )
     : hospitals;
+
+  useEffect(()=>{
+    refreshData()
+  }, [])
 
   return (
     <MobileLayout>

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import MobileLayout from '@/components/layout/MobileLayout';
 import { useAppContext } from '@/context/AppContext';
 import EventSelector from '@/components/common/EventSelector';
@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useI18n } from '@/context/I18nContext'; // Import useI18n
 
 const DonatePage = () => {
-  const { hospitals, currentEvent } = useAppContext();
+  const { hospitals, currentEvent, refreshData } = useAppContext();
   const { t } = useI18n(); // Initialize useI18n
   
   const filteredHospitals = currentEvent
@@ -29,6 +29,10 @@ const DonatePage = () => {
   const volunteerNeeds = filteredHospitals.flatMap(hospital => 
     hospital.donationNeeds.filter(need => need.type === 'volunteers')
   );
+
+  useEffect(()=>{
+    refreshData()
+  }, [])
 
   return (
     <MobileLayout>
@@ -97,13 +101,14 @@ const DonatePage = () => {
                       <div key={need.id} className="bg-gray-50 p-3 rounded-lg">
                         <p className="font-medium mb-1">{hospital.name}</p>
                         <p className="text-sm">{need.description}</p>
+                        <a href={`tel:${hospital.phone}`} target="_blank" rel="noopener noreferrer">
+                          <Button className="w-full mt-2">
+                            {t('donatePage.supplyDonations.button')}
+                          </Button>
+                        </a>
                       </div>
                     ) : null;
                   })}
-                  
-                  <Button className="w-full mt-2">
-                    {t('donatePage.supplyDonations.button')}
-                  </Button>
                 </div>
               ) : (
                 <p className="text-gray-500">{t('donatePage.supplyDonations.noNeeds')}</p>
@@ -128,13 +133,14 @@ const DonatePage = () => {
                       <div key={need.id} className="bg-gray-50 p-3 rounded-lg">
                         <p className="font-medium mb-1">{hospital.name}</p>
                         <p className="text-sm">{need.description}</p>
+                        <a href={`tel:${hospital.phone}`} target="_blank" rel="noopener noreferrer">
+                          <Button className="w-full mt-2">
+                            {t('donatePage.volunteerHelp.button')}
+                          </Button>
+                        </a>
                       </div>
                     ) : null;
                   })}
-                  
-                  <Button className="w-full mt-2">
-                    {t('donatePage.volunteerHelp.button')}
-                  </Button>
                 </div>
               ) : (
                 <p className="text-gray-500">{t('donatePage.volunteerHelp.noNeeds')}</p>
