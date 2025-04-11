@@ -110,7 +110,7 @@ const MapPage = () => {
                     >
                       {hospital.name}
                     </button>
-                    <div>{t('mapPage.patientsRegistered')}: {hospital.patientCount}</div>
+                    <div>{t('mapPage.peopleRegistered')}: {hospital.patientCount}</div>
                     <div className="text-xs text-gray-500">{hospital.address}</div>
                   </Popup>
                 </Marker>
