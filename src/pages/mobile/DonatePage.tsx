@@ -65,13 +65,14 @@ const DonatePage = () => {
                             {t(`urgency.${need.urgency}`)}
                           </span>
                         </div>
+                        <a href={`tel:${hospital.phone}`} target="_blank" rel="noopener noreferrer">
+                          <Button className="w-full mt-4">
+                            {t('donatePage.bloodDonations.button')}
+                          </Button>
+                        </a>
                       </div>
                     ) : null;
                   })}
-                  
-                  <Button className="w-full mt-2">
-                    {t('donatePage.bloodDonations.button')}
-                  </Button>
                 </div>
               ) : (
                 <p className="text-gray-500">{t('donatePage.bloodDonations.noNeeds')}</p>

@@ -53,17 +53,21 @@ const HospitalDetailsPage = () => {
             <HospitalStatusBadge status={hospital.status} />
           </div>
           
-          <div className="flex items-center text-gray-600 mb-1">
-            <MapPin size={16} className="mr-1" />
-            <span className="text-sm">
-              {hospital.address}, {hospital.city}, {hospital.state} {hospital.zipCode}
-            </span>
-          </div>
+          <a href={`https://maps.google.com/maps?q=${hospital.name +', '+ hospital.address}`} target="_blank" rel="noopener noreferrer">
+            <div className="flex items-center text-gray-600 mb-1">
+              <MapPin size={16} className="mr-1" />
+              <span className="text-sm">
+                {hospital.address}
+              </span>
+            </div>
+          </a>
           
-          <div className="flex items-center text-gray-600">
-            <Phone size={16} className="mr-1" />
-            <span className="text-sm">{hospital.phone}</span>
-          </div>
+          <a href={`tel:${hospital.phone}`} target="_blank" rel="noopener noreferrer">
+            <div className="flex items-center text-gray-600">
+              <Phone size={16} className="mr-1" />
+              <span className="text-sm">{hospital.phone}</span>
+            </div>
+          </a>
         </div>
         
         <Tabs defaultValue="patients" className="mt-6">

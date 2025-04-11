@@ -30,10 +30,12 @@ const HospitalCard = ({ hospital }: HospitalCardProps) => {
       </CardHeader>
       <CardContent className="p-4">
         <div className="mb-3">
-          <div className="flex items-center mb-2">
-            <Phone size={14} className="text-gray-500 mr-1" />
-            <span className="text-sm">{hospital.phone}</span>
-          </div>
+          <a href={`tel:${hospital.phone}`} target="_blank" rel="noopener noreferrer">
+            <div className="flex items-center mb-2">
+              <Phone size={14} className="text-gray-500 mr-1" />
+              <span className="text-sm">{hospital.phone}</span>
+            </div>
+          </a>
         </div>
         
         {hospital.donationNeeds.length > 0 && (
