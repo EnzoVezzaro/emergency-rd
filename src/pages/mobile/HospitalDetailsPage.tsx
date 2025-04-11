@@ -134,7 +134,7 @@ const HospitalDetailsPage = () => {
                         <div className="flex justify-between items-start mb-2">
                           <DonationNeedBadge need={need} />
                           <span className="text-xs bg-gray-200 px-2 py-1 rounded-full capitalize">
-                            {t(`urgency.${need.urgency}`)} {t('hospitalDetailsPage.donationNeeds.priority')}
+                          {t('hospitalDetailsPage.donationNeeds.priority')}: {t(`urgency.${need.urgency}`)}
                           </span>
                         </div>
                         <p className="text-sm">{need.description}</p>
@@ -142,9 +142,11 @@ const HospitalDetailsPage = () => {
                     ))}
                     
                     <div className="pt-4">
-                      <Button className="w-full">
-                        {t('hospitalDetailsPage.donationNeeds.button')}
-                      </Button>
+                      <a href={`tel:${hospital.phone}`} target='_blank' className="w-full">
+                        <Button className="w-full">
+                          {t('hospitalDetailsPage.donationNeeds.button')}
+                        </Button> 
+                      </a>
                     </div>
                   </div>
                 ) : (
