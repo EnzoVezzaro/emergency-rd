@@ -10,7 +10,8 @@ const Index = () => {
   const { t } = useI18n();
   return (
     <div className="min-h-screen bg-gradient-to-b from-primary-50 to-white flex flex-col items-center justify-center p-4">
-      <div className="text-center mb-8">
+      <div className="text-center mb-8 flex flex-col items-center justify-center">
+        <img src="/logo.png" alt="Logo" style={{ width: 150, height: 'auto' }} />
         <h1 className="text-4xl font-bold text-primary-900 mb-2">{t('index.title')}</h1>
         <p className="text-xl text-gray-600 max-w-lg mx-auto">
           {t('index.subtitle')}
@@ -27,7 +28,7 @@ const Index = () => {
             <CardDescription>
               {t('index.cards.mobile.description')}
             </CardDescription>
-          </CardHeader>
+          </CardHeader> 
           <CardContent>
             <ul className="space-y-2 text-gray-600">
               <li className="flex items-center">
@@ -91,6 +92,12 @@ const Index = () => {
             </Button>
           </CardFooter>
         </Card>
+      </div>
+
+      <div className="text-center mt-8">
+        <Button asChild>
+          <a href="/site.webmanifest" download="manifest.webmanifest">{t('index.downloadPWA')}</a>
+        </Button>
       </div>
       
       <footer className="mt-12 text-center text-sm text-gray-500">

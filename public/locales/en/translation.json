@@ -86,7 +86,8 @@
           "Create and distribute alerts"
         ],
         "button": "Access Dashboard"
-      }
+      },
+      "downloadPWA": "Download Mobile App"
     },
     "footer": {
       "copyright": "© 2025 Emergency Response System. All rights reserved.",
