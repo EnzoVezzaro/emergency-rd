@@ -524,6 +524,7 @@
   },
   "mapPage": {
     "title": "Mapa",
+    "peopleRegistered": "Personas",
     "eventActive": {
       "title": "Evento Activo"
     },
